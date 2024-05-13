@@ -1,6 +1,6 @@
 ---
 title: "STAR_Under12mo_Qsts"
-author: "Sherry Zhang"
+author: "Melanie Kwan"
 date: '2023-08-31'
 output: html_document
 editor_options: 
@@ -26,7 +26,7 @@ lapply(list.of.packages, require, character.only = TRUE)
 ```{r}
 path_dir <- "/Users/melaniekwan/Library/CloudStorage/GoogleDrive-smkwan@usc.edu/.shortcut-targets-by-id/1YZiuWrGpvn0s5DiJmiP6QJk1xf30pnzy/BEAD Lab/Studies/STAR/Data/Questionnaires/Under 12 mos" #This is for Mel
 setwd(path_dir)
-star <- read.csv("/Users/melaniekwan/Library/CloudStorage/GoogleDrive-smkwan@usc.edu/.shortcut-targets-by-id/1YZiuWrGpvn0s5DiJmiP6QJk1xf30pnzy/BEAD Lab/Studies/STAR/Data/Questionnaires/Under 12 mos/STARUnder12Mos_DATA_2024-03-05_1518.csv")
+star <- read.csv("/Users/melaniekwan/Library/CloudStorage/GoogleDrive-smkwan@usc.edu/.shortcut-targets-by-id/1YZiuWrGpvn0s5DiJmiP6QJk1xf30pnzy/BEAD Lab/Studies/STAR/Data/Questionnaires/Under 12 mos/")
 ```
 
 
