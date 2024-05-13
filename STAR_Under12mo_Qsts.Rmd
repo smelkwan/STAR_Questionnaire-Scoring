@@ -1,0 +1,1914 @@
+---
+title: "STAR_Under12mo_Qsts"
+author: "Sherry Zhang"
+date: '2023-08-31'
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Setup 
+```{r}
+###Download all packages: This will let you use shortcuts for the rest of the code :D
+list.of.packages <- c("psych", "zoo", "reshape2", "car", "plyr", "nlme", "ggplot2", "tidyr", "dplyr", "lubridate", "lavaan", "haven", "foreign")
+new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
+if(length(new.packages)) install.packages(new.packages)
+# Loading packages
+lapply(list.of.packages, require, character.only = TRUE)
+```
+
+# Under 12mos
+## Read in data
+```{r}
+path_dir <- "/Users/melaniekwan/Library/CloudStorage/GoogleDrive-smkwan@usc.edu/.shortcut-targets-by-id/1YZiuWrGpvn0s5DiJmiP6QJk1xf30pnzy/BEAD Lab/Studies/STAR/Data/Questionnaires/Under 12 mos" #This is for Mel
+setwd(path_dir)
+star <- read.csv("/Users/melaniekwan/Library/CloudStorage/GoogleDrive-smkwan@usc.edu/.shortcut-targets-by-id/1YZiuWrGpvn0s5DiJmiP6QJk1xf30pnzy/BEAD Lab/Studies/STAR/Data/Questionnaires/Under 12 mos/STARUnder12Mos_DATA_2024-03-05_1518.csv")
+```
+
+
+### CMU (Infant Screen Time)
+```{r}
+star$cmu_pr_07a_hrs_min <- star$cmu_pr_07a_hrs*60 # Converting into minutes
+star$cmu_07a_total <- rowSums(star[,c("cmu_pr_07a_hrs_min", 	"cmu_pr_07a_mins")], na.rm = T)
+star$cmu_pr_07a_total <- ifelse(is.na(star$cmu_pr_07a_hrs_min) & is.na(star$cmu_pr_07a_mins) & star$cmu_pr_07a_na___1 != "1", NA,
+                                ifelse(star$cmu_pr_07a_na___1 == "1", 0,star$cmu_07a_total))
+#View(star[c("record_id","cmu_pr_07a_total", "cmu_pr_07a_hrs_min", 	"cmu_pr_07a_mins", "cmu_pr_07a_na___1")])
+
+star$cmu_pr_07b_hrs_min <- star$cmu_pr_07b_hrs*60 
+star$cmu_07b_total <- rowSums(star[,c("cmu_pr_07b_hrs_min", 	"cmu_pr_07b_mins")], na.rm = T)
+star$cmu_pr_07b_total <- ifelse(is.na(star$cmu_pr_07b_hrs_min) & is.na(star$cmu_pr_07b_mins) & star$cmu_pr_07b_na___1 != "1", NA,
+                                ifelse(star$cmu_pr_07b_na___1 == "1", 0,star$cmu_07b_total))
+#View(star[c("record_id", "cmu_pr_07b_total", "cmu_pr_07b_hrs_min", "cmu_pr_07b_mins", "cmu_pr_07b_na___1")])
+
+star$cmu_pr_07c_hrs_min <- star$cmu_pr_07c_hrs*60
+star$cmu_07c_total <- rowSums(star[,c("cmu_pr_07c_hrs_min", 	"cmu_pr_07c_mins")], na.rm = T)
+star$cmu_pr_07c_total <- ifelse(is.na(star$cmu_pr_07c_hrs_min) & is.na(star$cmu_pr_07c_mins) & star$cmu_pr_07c_na___1 != "1", NA,
+                                ifelse(star$cmu_pr_07c_na___1 == "1", 0,star$cmu_07c_total))
+#View(star[c("record_id", "cmu_pr_07c_total", "cmu_pr_07c_hrs_min", "cmu_pr_07c_mins", "cmu_pr_07c_na___1")])
+
+star$cmu_pr_07d_hrs_min <-star$cmu_pr_07d_hrs*60
+star$cmu_07d_total <- rowSums(star[,c("cmu_pr_07d_hrs", "cmu_pr_07d_mins")], na.rm = T)
+star$cmu_pr_07d_total <- ifelse(is.na(star$cmu_pr_07d_hrs_min) & is.na(star$cmu_pr_07d_mins) & star$cmu_pr_07d_na___1 != "1", NA,
+                                ifelse(star$cmu_pr_07d_na___1 == "1", 0,star$cmu_07d_total))
+#View(star[c("record_id", "cmu_pr_07d_total", "cmu_pr_07d_hrs_min", "cmu_pr_07d_mins", "cmu_pr_07d_na___1")])
+
+star$cmu_pr_07e_hrs_min <- star$cmu_pr_07e_hrs*60
+star$cmu_07e_total <- rowSums(star[,c("cmu_pr_07e_hrs", "cmu_pr_07e_mins", "cmu_pr_07e_na___1")], na.rm = T)
+star$cmu_pr_07e_total <- ifelse(is.na(star$cmu_pr_07e_hrs_min) & is.na(star$cmu_pr_07e_mins) & star$cmu_pr_07e_na___1 != "1", NA,
+                                ifelse(star$cmu_pr_07e_na___1 == "1", 0,star$cmu_07e_total))
+#View(star[c("record_id", "cmu_pr_07e_total", "cmu_pr_07e_hrs_min", "cmu_pr_07e_mins", "cmu_pr_07e_na___1")])
+
+star$cmu_pr_07f_hrs_min <- star$cmu_pr_07f_hrs*60
+star$cmu_07f_total <- rowSums(star[,c("cmu_pr_07f_hrs", "cmu_pr_07f_mins")], na.rm = T)
+star$cmu_pr_07f_total <- ifelse(is.na(star$cmu_pr_07f_hrs_min) & is.na(star$cmu_pr_07f_mins) & star$cmu_pr_07f_na___1 != "1", NA,
+                                ifelse(star$cmu_pr_07f_na___1 == "1", 0,star$cmu_07f_total))
+#View(star[c("record_id","cmu_pr_07f_total", "cmu_pr_07f_hrs_min", "cmu_pr_07f_mins", "cmu_pr_07f_na___1")])
+
+star$cmu_pr_07g_hrs_min <- star$cmu_pr_07g_hrs*60
+star$cmu_07g_total <- rowSums(star[,c("cmu_pr_07g_hrs", "cmu_pr_07g_mins")], na.rm = T)
+star$cmu_pr_07g_total <- ifelse(is.na(star$cmu_pr_07g_hrs_min) & is.na(star$cmu_pr_07g_mins) & star$cmu_pr_07g_na___1 != "1", NA,
+                                ifelse(star$cmu_pr_07g_na___1 == "1", 0,star$cmu_07g_total))
+#View(star[c("record_id","cmu_pr_07g_total", "cmu_pr_07g_hrs_min", "cmu_pr_07g_mins", "cmu_pr_07g_na___1")])
+
+star$cmu_pr_07h_hrs_min <- star$cmu_pr_07h_hrs*60
+star$cmu_07h_total <- rowSums(star[,c("cmu_pr_07h_hrs", "cmu_pr_07h_mins")], na.rm = T)
+star$cmu_pr_07h_total <- ifelse(is.na(star$cmu_pr_07h_hrs_min) & is.na(star$cmu_pr_07h_mins) & star$cmu_pr_07h_na___1 != "1", NA,
+                                ifelse(star$cmu_pr_07h_na___1 == "1", 0,star$cmu_07h_total))
+#View(star[c("record_id", "cmu_pr_07h_total", "cmu_pr_07h_hrs_min", "cmu_pr_07f_mins", "cmu_pr_07h_na___1")])
+
+star$cmu_pr_07i_hrs_min <- star$cmu_pr_07i_hrs*60
+star$cmu_07i_total <- rowSums(star[,c("cmu_pr_07i_hrs", "cmu_pr_07i_mins")], na.rm = T)
+star$cmu_pr_07i_total <- ifelse(is.na(star$cmu_pr_07i_hrs_min) & is.na(star$cmu_pr_07i_mins) & star$cmu_pr_07i_na___1 != "1", NA,
+                                ifelse(star$cmu_pr_07i_na___1 == "1", 0,star$cmu_07i_total))
+#View(star[c("record_id", "cmu_pr_07i_total", "cmu_pr_07i_hrs_min", "cmu_pr_07i_mins", "cmu_pr_07i_na___1")])
+
+star$cmu_pr_07j_hrs_min <- star$cmu_pr_07j_hrs*60
+star$cmu_07j_total <- rowSums(star[,c("cmu_pr_07j_hrs", "cmu_pr_07j_mins")], na.rm = T)
+star$cmu_pr_07j_total <- ifelse(is.na(star$cmu_pr_07j_hrs_min) & is.na(star$cmu_pr_07j_mins) & star$cmu_pr_07j_na___1 != "1", NA,
+                                ifelse(star$cmu_pr_07j_na___1 == "1", 0,star$cmu_07j_total))
+#View(star[c("record_id", "cmu_pr_07j_total", "cmu_pr_07j_hrs_min", "cmu_pr_07j_mins", "cmu_pr_07j_na___1")])
+
+star$cmu_pr_total <- rowSums(star[,c("cmu_pr_07a_total", "cmu_pr_07b_total", "cmu_pr_07c_total", "cmu_pr_07d_total", "cmu_pr_07e_total", "cmu_pr_07f_total", "cmu_pr_07g_total", "cmu_pr_07h_total", "cmu_pr_07i_total", "cmu_pr_07j_total")], na.rm = T)
+
+psych::alpha(star[,c("cmu_pr_07a_total", "cmu_pr_07c_total", "cmu_pr_07i_total", "cmu_pr_07j_total")]) # It seems like several items have no variance or do not make sense for babies. We should be very careful before using this questionnaire
+
+# psych::alpha(star[,c("cmu_pr_07a_total", "cmu_pr_07b_total", "cmu_pr_07c_total", "cmu_pr_07d_total", "cmu_pr_07e_total", "cmu_pr_07f_total", "cmu_pr_07g_total", "cmu_pr_07h_total", "cmu_pr_07i_total", "cmu_pr_07j_total")])
+                  
+#Only score participants who have completed >80% questionnaires
+star$cmu_pr_total[rowSums(is.na(star[,c("cmu_pr_07a_total", "cmu_pr_07b_total", "cmu_pr_07c_total", "cmu_pr_07d_total", "cmu_pr_07e_total", "cmu_pr_07f_total", "cmu_pr_07g_total", "cmu_pr_07h_total", "cmu_pr_07i_total", "cmu_pr_07j_total")])) > 2 ] <- NA
+
+#Total infant screentime 
+star$cmu_pr_total
+```
+
+###Scoring CMU_Secondary (Infant Screentime Secondary)
+```{r}
+# Converting into minutes
+star$cmu_pr_07a_total_secondary <- with(star, ifelse(
+  is.na(cmu_pr_07a_hrs_secondary) & is.na(cmu_pr_07a_mins_secondary) & cmu_pr_07a_na_secondary___1 != "1", 
+  NA,
+  ifelse(cmu_pr_07a_na_secondary___1 == "1", 0, cmu_pr_07a_hrs_secondary * 60 + cmu_pr_07a_mins_secondary)
+))
+
+#View(star[c("record_id", "cmu_pr_07a_total_secondary", "cmu_pr_07a_hrs_min_secondary", "cmu_pr_07a_mins_secondary", "cmu_pr_07a_na_secondary___1")])
+
+star$cmu_pr_07b_hrs_mins_secondary <- star$cmu_pr_07b_hrs_secondary*60 
+star$cmu_07b_total_secondary <- rowSums(star[,c("cmu_pr_07b_hrs_mins_secondary", 	"cmu_pr_07b_mins_secondary")], na.rm = T)
+star$cmu_pr_07b_total_secondary <- ifelse(is.na(star$cmu_pr_07b_hrs_mins_secondary) & is.na(star$cmu_pr_07b_mins_secondary) & star$cmu_pr_07b_na_secondary___1 != "1", NA,
+                                ifelse(star$cmu_pr_07b_na___1 == "1", 0,star$cmu_07b_total))
+#View(star[c("record_id", "cmu_pr_07b_total_secondary", "cmu_pr_07b_hrs_mins_secondary", "cmu_pr_07b_mins_secondary", "cmu_pr_07b_na_secondary___1")])
+
+star$cmu_pr_07c_hrs_min_secondary <- star$cmu_pr_07c_hrs_secondary*60
+star$cmu_07c_total_secondary <- rowSums(star[,c("cmu_pr_07c_hrs_secondary", 	"cmu_pr_07c_mins_secondary")], na.rm = T)
+star$cmu_pr_07c_total_secondary <- ifelse(is.na(star$cmu_pr_07c_hrs_min_secondary) & is.na(star$cmu_pr_07c_mins_secondary) & star$cmu_pr_07c_na_secondary___1 != "1", NA,
+                                ifelse(star$cmu_pr_07c_na_secondary___1 == "1", 0,star$cmu_07c_total_secondary))
+#View(star[c("record_id", "cmu_pr_07c_total_secondary", "cmu_pr_07c_hrs_min_secondary", "cmu_pr_07c_mins_secondary", "cmu_pr_07c_na_secondary___1")])
+
+star$cmu_pr_07d_hrs_min_secondary <-star$cmu_pr_07d_hrs_secondary*60
+star$cmu_07d_total_secondary <- rowSums(star[,c("cmu_pr_07d_hrs_secondary", "cmu_pr_07d_mins_secondary")], na.rm = T)
+star$cmu_pr_07d_total_secondary <- ifelse(is.na(star$cmu_pr_07d_hrs_min_secondary) & is.na(star$cmu_pr_07d_mins_secondary) & star$cmu_pr_07d_na_secondary___1 != "1", NA,
+                                ifelse(star$cmu_pr_07d_na_secondary___1 == "1", 0,star$cmu_07d_total_secondary))
+#View(star[c("record_id", "cmu_pr_07d_total_secondary", "cmu_pr_07d_hrs_min_secondary", "cmu_pr_07d_mins", "cmu_pr_07d_na_secondary___1")])
+
+star$cmu_pr_07e_hrs_min_secondary <- star$cmu_pr_07e_hrs_secondary*60
+star$cmu_07e_total_secondary <- rowSums(star[,c("cmu_pr_07e_hrs_secondary", "cmu_pr_07e_mins_secondary", "cmu_pr_07e_na_secondary___1")], na.rm = T)
+star$cmu_pr_07e_total_secondary <- ifelse(is.na(star$cmu_pr_07e_hrs_min_secondary) & is.na(star$cmu_pr_07e_mins_secondary) & star$cmu_pr_07e_na_secondary___1 != "1", NA,
+                                ifelse(star$cmu_pr_07e_na___1 == "1", 0,star$cmu_07e_total_secondary))
+#View(star[c("record_id", "cmu_07e_total_secondary", "cmu_pr_07e_hrs_min_secondary", "cmu_pr_07e_mins_secondary", "cmu_pr_07e_na_secondary___1")])
+
+star$cmu_pr_07f_hrs_min_secondary <- star$cmu_pr_07f_hrs_secondary*60
+star$cmu_07f_total_secondary <- rowSums(star[,c("cmu_pr_07f_hrs_secondary", "cmu_pr_07f_mins_secondary")], na.rm = T)
+star$cmu_pr_07f_total_secondary <- ifelse(is.na(star$cmu_pr_07f_hrs_min_secondary) & is.na(star$cmu_pr_07f_mins_secondary) & star$cmu_pr_07f_na_secondary___1 != "1", NA,
+                                ifelse(star$cmu_pr_07f_na_secondary___1 == "1", 0,star$cmu_07f_total_secondary))
+#View(star[c("record_id","cmu_07f_total_secondary", "cmu_pr_07f_hrs_min_secondary", "cmu_pr_07f_mins_secondary", "cmu_pr_07f_na_secondary___1")])
+
+star$cmu_pr_07g_hrs_min_secondary <- star$cmu_pr_07g_hrs_secondary*60
+star$cmu_07g_total_secondary <- rowSums(star[,c("cmu_pr_07g_hrs_secondary", "cmu_pr_07g_mins_secondary")], na.rm = T)
+star$cmu_pr_07g_total_secondary <- ifelse(is.na(star$cmu_pr_07g_hrs_min_secondary) & is.na(star$cmu_pr_07g_mins_secondary) & star$cmu_pr_07g_na_secondary___1 != "1", NA,
+                                ifelse(star$cmu_pr_07g_na_secondary___1 == "1", 0,star$cmu_07g_total_secondary))
+#View(star[c("record_id","cmu_07g_total_secondary", "cmu_pr_07g_hrs_min_secondary", "cmu_pr_07g_mins_secondary", "cmu_pr_07g_na_secondary___1")])
+
+star$cmu_pr_07h_hrs_min_secondary <- star$cmu_pr_07h_hrs_secondary*60
+star$cmu_07h_total_secondary <- rowSums(star[,c("cmu_pr_07h_hrs_secondary", "cmu_pr_07h_mins_secondary")], na.rm = T)
+star$cmu_pr_07h_total_secondary <- ifelse(is.na(star$cmu_pr_07h_hrs_min_secondary) & is.na(star$cmu_pr_07h_mins_secondary) & star$cmu_pr_07h_na_secondary___1 != "1", NA,
+                                ifelse(star$cmu_pr_07h_na_secondary___1 == "1", 0,star$cmu_07h_total_secondary))
+#View(star[c("record_id", "cmu_07h_total_secondary", "cmu_pr_07h_hrs_min_secondary", "cmu_pr_07h_mins_secondary", "cmu_pr_07h_na_secondary___1")])
+
+star$cmu_pr_07i_hrs_min_secondary <- star$cmu_pr_07i_hrs_secondary*60
+star$cmu_07i_total_secondary <- rowSums(star[,c("cmu_pr_07i_hrs_secondary", "cmu_pr_07i_mins_secondary")], na.rm = T)
+star$cmu_pr_07i_total_secondary <- ifelse(is.na(star$cmu_pr_07i_hrs_min_secondary) & is.na(star$cmu_pr_07i_mins_secondary) & star$cmu_pr_07i_na_secondary___1 != "1", NA,
+                                ifelse(star$cmu_pr_07i_na_secondary___1 == "1", 0,star$cmu_07i_total_secondary))
+#View(star[c("record_id", "cmu_07i_total_secondary", "cmu_pr_07i_hrs_min_secondary", "cmu_pr_07i_mins_secondary", "cmu_pr_07i_na_secondary___1")])
+
+star$cmu_pr_07j_hrs_min_secondary <- star$cmu_pr_07j_hrs_secondary*60
+star$cmu_07j_total_secondary <- rowSums(star[,c("cmu_pr_07j_hrs_secondary", "cmu_pr_07j_mins_secondary")], na.rm = T)
+star$cmu_pr_07j_total_secondary <- ifelse(is.na(star$cmu_pr_07j_hrs_min_secondary) & is.na(star$cmu_pr_07j_mins_secondary) & star$cmu_pr_07j_na_secondary___1 != "1", NA,
+                                ifelse(star$cmu_pr_07j_na_secondary___1 == "1", 0,star$cmu_07j_total_secondary))
+#View(star[c("record_id", "cmu_pr_07j_total_secondary", "cmu_pr_07j_hrs_min_secondary", "cmu_pr_07j_mins_secondary", "cmu_pr_07j_na___1")])
+
+star$cmu_pr_total <- rowSums(star[,c("cmu_pr_07a_total_secondary", "cmu_pr_07b_total_secondary", "cmu_pr_07c_total_secondary", "cmu_pr_07d_total_secondary", "cmu_pr_07e_total_secondary", "cmu_pr_07f_total_secondary", "cmu_pr_07g_total_secondary", "cmu_pr_07h_total_secondary", "cmu_pr_07i_total_secondary", "cmu_pr_07j_total_secondary")], na.rm = T)
+
+#Only score participants who have completed >80% questionnaires
+star$cmu_pr_total_secondary[rowSums(is.na(star[,c("cmu_pr_07a_total_secondary", "cmu_pr_07b_total_secondary", "cmu_pr_07c_total_secondary", "cmu_pr_07d_total_secondary", "cmu_pr_07e_total_secondary", "cmu_pr_07f_total_secondary", "cmu_pr_07g_total_secondary", "cmu_pr_07h_total_secondary", "cmu_pr_07i_total_secondary", "cmu_pr_07j_total_secondary")])) > 2 ] <- NA
+
+#Total infant screentime 
+star$cmu_pr_total_secondary
+```
+
+
+# EPDS
+```{r}
+# NOTE: You have to be very careful because the numbers do not match the question number. Our version of the EPDS started in #3 for some reason. 
+star$epds_5.r <- car::recode(star$epds_5, " '0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star$epds_6.r <- car::recode(star$epds_6, " '0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star$epds_7.r <- car::recode(star$epds_7, "'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star$epds_8.r <- car::recode(star$epds_8,  " '0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star$epds_9.r <- car::recode(star$epds_9,  " '0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star$epds_10.r <- car::recode(star$epds_10,  " '0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star$epds_11.r <- car::recode(star$epds_11,  " '0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+
+
+star$epds_total <- rowSums(star[,c("epds_3", "epds_4", "epds_5.r", "epds_6.r", "epds_7.r", "epds_8.r", "epds_9.r", "epds_10.r", "epds_11.r")], na.rm = T)
+
+psych::alpha(star[, c("epds_3", "epds_4", "epds_5.r", "epds_6.r", "epds_7.r", "epds_8.r", "epds_9.r", "epds_10.r", "epds_11.r")])
+
+#Only score participants who have completed more than 80%
+star$epds_total[rowSums(is.na(star[,c("epds_3", "epds_4", "epds_5.r", "epds_6.r", "epds_7.r", "epds_8.r", "epds_9.r", "epds_10.r", "epds_11.r")])) > 2 ] <- NA
+
+#Get scores of EPD
+#View(star[,c("record_id", "epds_total")])
+star$epds_total
+```
+
+# BDI
+```{r}
+star$bdi_total <- rowSums(star[,c("bdi_1",	"bdi_2",	"bdi_3",	"bdi_4",	"bdi_5",	"bdi_6",	"bdi_7",	"bdi_8",	"bdi_9",	"bdi_10",	"bdi_11",	"bdi_12",	"bdi_13",	"bdi_14",	"bdi_15",	"bdi_16",	"bdi_17",	"bdi_18",	"bdi_19",	"bdi_20")], na.rm = T)
+
+psych::alpha(star[,c("bdi_1",	"bdi_2",	"bdi_3",	"bdi_4",	"bdi_5",	"bdi_6",	"bdi_7",	"bdi_8",	"bdi_9",	"bdi_10",	"bdi_11",	"bdi_12",	"bdi_13",	"bdi_14",	"bdi_15",	"bdi_16",	"bdi_17",	"bdi_18",	"bdi_19",	"bdi_20")])
+
+#Only score participants who have completed >80% questionnaires
+star$bdi_total[rowSums(is.na(star[,c("bdi_1",	"bdi_2",	"bdi_3",	"bdi_4",	"bdi_5",	"bdi_6",	"bdi_7",	"bdi_8",	"bdi_9",	"bdi_10",	"bdi_11",	"bdi_12",	"bdi_13",	"bdi_14",	"bdi_15",	"bdi_16",	"bdi_17",	"bdi_18",	"bdi_19",	"bdi_20")])) > 2 ] <- NA
+
+#Get scores of BDI 
+(star$bdi_total)
+```
+
+
+## BDI_Secondary
+```{r}
+star$bdi_secondary_total <- rowSums(star[,c("bdi_1_secondary",	"bdi_2_secondary",	"bdi_3_secondary",	"bdi_4_secondary",	"bdi_5_secondary",	"bdi_6_secondary",	"bdi_7_secondary",	"bdi_8_secondary",	"bdi_9_secondary",	"bdi_10_secondary",	"bdi_11_secondary",	"bdi_12_secondary",	"bdi_13_secondary",	"bdi_14_secondary", "bdi_15_secondary",	"bdi_16_secondary", "bdi_17_secondary",	"bdi_18_secondary","bdi_19_secondary", "bdi_20_secondary")], na.rm = T)
+
+psych::alpha(star[,c("bdi_1_secondary",	"bdi_2_secondary",	"bdi_3_secondary",	"bdi_4_secondary",	"bdi_5_secondary",	"bdi_6_secondary",	"bdi_7_secondary",	"bdi_8_secondary",	"bdi_9_secondary",	"bdi_10_secondary",	"bdi_11_secondary",	"bdi_12_secondary",	"bdi_13_secondary",	"bdi_14_secondary", "bdi_15_secondary",	"bdi_16_secondary", "bdi_17_secondary",	"bdi_18_secondary","bdi_19_secondary", "bdi_20_secondary")])
+
+#Only score participants who have completed >80% of questionnaires 
+star$bdi_secondary_total [rowSums(is.na(star[,c("bdi_1_secondary",	"bdi_2_secondary",	"bdi_3_secondary",	"bdi_4_secondary",	"bdi_5_secondary",	"bdi_6_secondary",	"bdi_7_secondary",	"bdi_8_secondary",	"bdi_9_secondary",	"bdi_10_secondary",	"bdi_11_secondary",	"bdi_12_secondary",	"bdi_13_secondary",	"bdi_14_secondary", "bdi_15_secondary",	"bdi_16_secondary", "bdi_17_secondary",	"bdi_18_secondary","bdi_19_secondary", "bdi_20_secondary")])) > 2] <- NA
+                          
+#Get Scores of BDI_Secondary  
+(star$bdi_secondary_total)
+```
+
+
+# BDI-2 
+```{r}
+star$bdiii_total <- rowSums(star[,c("bdiii_1",	"bdiii_2",	"bdiii_3",	"bdiii_4",	"bdiii_5",	"bdiii_6",	"bdiii_7",	"bdiii_8",	"bdiii_9",	"bdiii_10",	"bdiii_11",	"bdiii_12",	"bdiii_13",	"bdiii_14",	"bdiii_15",	"bdiii_16",	"bdiii_17",	"bdiii_18",	"bdiii_19",	"bdiii_20",	"bdiii_21")])
+
+psych::alpha(star[,c("bdiii_1",	"bdiii_2",	"bdiii_3",	"bdiii_4",	"bdiii_5",	"bdiii_6",	"bdiii_7",	"bdiii_8",	"bdiii_9",	"bdiii_10",	"bdiii_11",	"bdiii_12",	"bdiii_13",	"bdiii_14",	"bdiii_15",	"bdiii_16",	"bdiii_17",	"bdiii_18",	"bdiii_19",	"bdiii_20",	"bdiii_21")])
+
+#Only score people who completed 80% or more 
+star$bdiii_total [rowSums(is.na(star[,c("bdiii_1",	"bdiii_2",	"bdiii_3",	"bdiii_4",	"bdiii_5",	"bdiii_6",	"bdiii_7",	"bdiii_8",	"bdiii_9",	"bdiii_10",	"bdiii_11",	"bdiii_12",	"bdiii_13",	"bdiii_14",	"bdiii_15",	"bdiii_16",	"bdiii_17",	"bdiii_18",	"bdiii_19",	"bdiii_20",	"bdiii_21")])) > 2] <- NA
+
+#Get scores
+#View(star[c("record_id", "bdiii_total")])
+star$bdiii_total
+```
+
+## BDI-2 Secondary
+```{r}
+#star$bdiii_secondary_total <- rowSums(star[,c("bdiii_1_secondary",	"bdiii_2_secondary",	"bdiii_3_secondary",	"bdiii_4_secondary",	"bdiii_5_secondary",	"bdiii_6_secondary",	"bdiii_7_secondary",	"bdiii_8_secondary",	"bdiii_9_secondary",	"bdiii_10_secondary",	"bdiii_11_secondary",	"bdiii_12_secondary",	"bdiii_13_secondary",	"bdiii_14_secondary",	"bdiii_15_secondary",	"bdiii_16_secondary",	"bdiii_17_secondary",	"bdiii_18_secondary",	"bdiii_19_secondary",	"bdiii_20_secondary",	"bdiii_21_secondary")])
+
+#psych::alpha(star[,c("bdiii_1_secondary",	"bdiii_2_secondary",	"bdiii_3_secondary",	"bdiii_4_secondary",	"bdiii_5_secondary",	"bdiii_6_secondary",	"bdiii_7_secondary",	"bdiii_8_secondary",	"bdiii_9_secondary",	"bdiii_10_secondary",	"bdiii_11_secondary",	"bdiii_12_secondary",	"bdiii_13_secondary",	"bdiii_14_secondary",	"bdiii_15_secondary",	"bdiii_16_secondary",	"bdiii_17_secondary",	"bdiii_18_secondary",	"bdiii_19_secondary",	"bdiii_20_secondary",	"bdiii_21_secondary")])
+
+#star$bdiii_secondary_total [rowSums(is.na(star[,c("bdiii_1_secondary",	"bdiii_2_secondary",	"bdiii_3_secondary",	"bdiii_4_secondary",	"bdiii_5_secondary",	"bdiii_6_secondary",	"bdiii_7_secondary",	"bdiii_8_secondary",	"bdiii_9_secondary",	"bdiii_10_secondary",	"bdiii_11_secondary",	"bdiii_12_secondary",	"bdiii_13_secondary",	"bdiii_14_secondary",	"bdiii_15_secondary",	"bdiii_16_secondary",	"bdiii_17_secondary",	"bdiii_18_secondary",	"bdiii_19_secondary",	"bdiii_20_secondary",	"bdiii_21_secondary")])) > 2] <- NA
+
+#Get score
+#View(star[c("record_id", "bdiii_secondary_total")])
+(star$bdiii_secondary_total)
+```
+
+# BAI
+```{r}
+star$bai_total <- rowSums(star[,c("bai_1_15", "bai_2_15", "bai_3_15", "bai_4_15",	"bai_5_15",	"bai_6_15",	"bai_7_15",	"bai_8_15",	"bai_9_15", "bai_10_15",	"bai_11_15",	"bai_12_15",	"bai_13_15",	"bai_14_15",	"bai_15_15",	"bai_16_15",	"bai_17_15",	"bai_18_15",	"bai_19_15",	"bai_20_15",	"bai_21_15")], na.rm = T)
+
+psych::alpha(star[,c("bai_1_15", "bai_2_15", "bai_3_15", "bai_4_15",	"bai_5_15",	"bai_6_15",	"bai_7_15",	"bai_8_15",	"bai_9_15", "bai_10_15",	"bai_11_15",	"bai_12_15",	"bai_13_15",	"bai_14_15",	"bai_15_15",	"bai_16_15",	"bai_17_15",	"bai_18_15",	"bai_19_15",	"bai_20_15",	"bai_21_15")])
+
+#Only score participants who have completed >80% questionnaires
+star$bai_total[rowSums(is.na(star[,c("bai_1_15", "bai_2_15", "bai_3_15", "bai_4_15",	"bai_5_15",	"bai_6_15",	"bai_7_15",	"bai_8_15",	"bai_9_15", "bai_10_15",	"bai_11_15",	"bai_12_15",	"bai_13_15",	"bai_14_15",	"bai_15_15",	"bai_16_15",	"bai_17_15",	"bai_18_15",	"bai_19_15",	"bai_20_15",	"bai_21_15")])) > 2 ] <- NA
+
+#Get scores of BAI
+#View(star[c("record_id", "bai_total")])
+star$bai_total
+```
+
+## BAI_Secondary
+```{r}
+#star$bai_secondary_total <- rowSums(star[,c("bai_1_15_secondary",	"bai_2_15_secondary",	"bai_3_15_secondary",	"bai_4_15_secondary", "bai_5_15_secondary",	"bai_6_15_secondary",	"bai_7_15_secondary",	"bai_8_15_secondary",	"bai_9_15_secondary","bai_10_15_secondary",	"bai_11_15_secondary", "bai_12_15_secondary",	"bai_13_15_secondary",	"bai_14_15_secondary",	"bai_15_15_secondary",	"bai_16_15_secondary", "bai_17_15_secondary", "bai_18_15_secondary",	"bai_19_15_secondary",	"bai_20_15_secondary",	"bai_21_15_secondary")], na.rm = T)
+
+#Only score participants who have completed >80%
+#star$bai_secondary_total [rowSums(is.na(star[,c("bai_1_15_secondary",	"bai_2_15_secondary",	"bai_3_15_secondary",	"bai_4_15_secondary", "bai_5_15_secondary",	"bai_6_15_secondary",	"bai_7_15_secondary",	"bai_8_15_secondary",	"bai_9_15_secondary","bai_10_15_secondary",	"bai_11_15_secondary", "bai_12_15_secondary",	"bai_13_15_secondary",	"bai_14_15_secondary",	"bai_15_15_secondary",	"bai_16_15_secondary", "bai_17_15_secondary", "bai_18_15_secondary",	"bai_19_15_secondary",	"bai_20_15_secondary",	"bai_21_15_secondary")])) > 2 ] <- NA
+
+#Get Scores of BAI_Secondary
+#View(star[c("record_id", "bai_secondary_total")])
+#list(star$bai_secondary_total)
+```
+
+# PSS 
+```{r}
+###Reverse code PSS
+# Reverse scoring these items: 4,5,7,8
+star$pss_4.r <- car::recode(star$pss_4, " '0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star$pss_5.r <- car::recode(star$pss_5, " '0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star$pss_7.r <- car::recode(star$pss_7, " '0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star$pss_8.r <- car::recode(star$pss_8, " '0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+
+#Score all PSS questionnaires including recoded 
+star$pss_total <- rowSums(star[,c("pss_1", "pss_2", "pss_3", "pss_4.r", "pss_5.r", "pss_6", "pss_7.r", "pss_8.r", "pss_9", "pss_10")], na.rm = T)
+psych::alpha(star[,c("pss_1", "pss_2", "pss_3", "pss_4.r", "pss_5.r", "pss_6", "pss_7.r", "pss_8.r", "pss_9", "pss_10")])
+
+#Only score participants who have completed >80% questionnaires
+star$pss_total[rowSums(is.na(star[,c("pss_1", "pss_2", "pss_3", "pss_4.r", "pss_5.r", "pss_6", "pss_7.r", "pss_8.r", "pss_9", "pss_10")])) > 2 ] <- NA
+
+#Get Scores of PSS
+(star[c("pss_1", "pss_2", "pss_3", "pss_4.r", "pss_5.r", "pss_6", "pss_7.r", "pss_8.r", "pss_9", "pss_10", "pss_total")])
+#View(star[,c("record_id", "pss_total")])
+star$pss_total
+```
+
+## PSS_Secondary
+```{r}
+#Reverse score PSS 
+star$pss_4_secondary.r <- car::recode(star$pss_4_secondary,"'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star$pss_5_secondary.r <- car::recode(star$pss_5_secondary, "'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star$pss_7_secondary.r <- car::recode (star$pss_7_secondary,"'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star$pss_8_secondary.r <- car::recode(star$pss_8_secondary, "'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+
+#Score all PSS questionnaires including recoded 
+star$pss_secondary_total <- rowSums(star[,c("pss_1_secondary", "pss_2_secondary",	"pss_3_secondary",	"pss_4_secondary.r",	"pss_5_secondary.r", "pss_6_secondary",	"pss_7_secondary.r", "pss_8_secondary.r",	"pss_9_secondary",	"pss_10_secondary")], na.rm = T)
+psych::alpha(star[,c("pss_1_secondary", "pss_2_secondary",	"pss_3_secondary",	"pss_4_secondary.r",	"pss_5_secondary.r", "pss_6_secondary",	"pss_7_secondary.r", "pss_8_secondary.r",	"pss_9_secondary",	"pss_10_secondary")])
+
+#Only score participants who have completed 
+star$pss_secondary_total [rowSums(is.na(star[,c("pss_1_secondary", "pss_2_secondary",	"pss_3_secondary",	"pss_4_secondary.r",	"pss_5_secondary.r", "pss_6_secondary",	"pss_7_secondary.r", "pss_8_secondary.r",	"pss_9_secondary",	"pss_10_secondary")])) > 2] <- NA
+
+#Get scores of PSS for secondary
+list(star$pss_secondary_total)
+```
+
+# STAS (State Trait)
+```{r}
+#Reverse code
+star$stas_1.r <-  car::recode(star$stas_1,"'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star$stas_2.r <- car::recode(star$stas_2,"'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star$stas_5.r <- car::recode(star$stas_5,"'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star$stas_8.r <- car::recode(star$stas_8,"'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star$stas_10.r <- car::recode(star$stas_10,"'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star$stas_11.r <- car::recode(star$stas_11,"'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star$stas_15.r <- car::recode(star$stas_15,"'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star$stas_16.r <- car::recode(star$stas_16,"'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star$stas_19.r <- car::recode(star$stas_19,"'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star$stas_21.r <- car::recode(star$stas_21,"'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star$stas_23.r <- car::recode(star$stas_23,"'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star$stas_26.r <- car::recode(star$stas_26,"'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star$stas_27.r <- car::recode(star$stas_27,"'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star$stas_30.r <- car::recode(star$stas_30,"'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star$stas_33.r <- car::recode(star$stas_33,"'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star$stas_34.r <- car::recode(star$stas_34,"'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star$stas_36.r <- car::recode(star$stas_36,"'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star$stas_39.r <- car::recode(star$stas_39,"'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+
+
+#Only scoring people who completed it AFTER we added instructions 
+star$stas_total <- rowSums(star[,c("stas_1.r","stas_2.r","stas_3","stas_4", "stas_5.r","stas_6", "stas_7","stas_8.r", "stas_9", "stas_10.r", "stas_11.r", "stas_12", "stas_13", "stas_14", "stas_15.r", "stas_16.r","stas_17","stas_18", "stas_19.r", "stas_21.r", "stas_22", "stas_23.r", "stas_24", "stas_25", "stas_26.r", "stas_27.r", "stas_28",	"stas_29", "stas_30.r", "stas_31",	"stas_32", "stas_33.r", "stas_34.r", "stas_35", "stas_36.r", "stas_37", "stas_38", "stas_39.r","stas_40")],na.rm = T)
+
+psych::alpha(star[,c("stas_1.r","stas_2.r","stas_3","stas_4", "stas_5.r","stas_6", "stas_7","stas_8.r", "stas_9", "stas_10.r", "stas_11.r", "stas_12", "stas_13", "stas_14", "stas_15.r", "stas_16.r","stas_17","stas_18", "stas_19.r", "stas_21.r", "stas_22", "stas_23.r", "stas_24", "stas_25", "stas_26.r", "stas_27.r", "stas_28",	"stas_29", "stas_30.r", "stas_31",	"stas_32", "stas_33.r", "stas_34.r", "stas_35", "stas_36.r", "stas_37", "stas_38", "stas_39.r","stas_40")])
+
+
+#Only score participants who completed 80% 
+star$stas_total[rowSums(is.na(star[,c("stas_1.r","stas_2.r","stas_3","stas_4", "stas_5.r","stas_6", "stas_7","stas_8.r", "stas_9", "stas_10.r", "stas_11.r", "stas_12", "stas_13", "stas_14", "stas_15.r", "stas_16.r","stas_17","stas_18", "stas_19.r", "stas_21.r", "stas_22", "stas_23.r", "stas_24", "stas_25", "stas_26.r", "stas_27.r", "stas_28",	"stas_29", "stas_30.r", "stas_31",	"stas_32", "stas_33.r", "stas_34.r", "stas_35", "stas_36.r", "stas_37", "stas_38", "stas_39.r","stas_40")])) > 2 ] <- NA
+
+#Get scores of STAS Total
+#View(star[c("record_id", "stas_total")])
+star$stas_total
+
+```
+
+##STAS_Secondary
+```{r}
+star$stas_secondary_total <- rowSums(star[,c("stas_1_secondary",	"stas_2_secondary",	"stas_3_secondary",	"stas_4_secondary",	"stas_5_secondary",	"stas_6_secondary",	"stas_7_secondary",	"stas_8_secondary", "stas_9_secondary",	"stas_10_secondary",	"stas_11_secondary",	"stas_12_secondary",	"stas_13_secondary",	"stas_14_secondary",	"stas_15_secondary",	"stas_16_secondary",	"stas_17_secondary",	"stas_18_secondary",	"stas_19_secondary",	"stas_20_secondary",	"stas_21_secondary",	"stas_22_secondary",	"stas_23_secondary",	"stas_24_secondary",	"stas_25_secondary",	"stas_26_secondary",	"stas_27_secondary",	"stas_28_secondary",	"stas_29_secondary",	"stas_30_secondary", "stas_31_secondary", "stas_32_secondary","stas_33_secondary",	"stas_34_secondary","stas_35_secondary",	"stas_36_secondary",	"stas_37_secondary",	"stas_38_secondary",	"stas_39_secondary", "stas_40_secondary")])
+
+#Only score participants who have completed 80%
+star$stas_secondary_total[rowSums(is.na(star[,c("stas_1_secondary","stas_2_secondary","stas_3_secondary","stas_4_secondary", "stas_5_secondary","stas_6_secondary", "stas_7_secondary","stas_8_secondary", "stas_9_secondary", "stas_10_secondary", "stas_11_secondary", "stas_12_secondary", "stas_13_secondary", "stas_14_secondary", "stas_15_secondary", "stas_16_secondary","stas_17_secondary","stas_18_secondary", "stas_19_secondary", "stas_20_secondary", "stas_21_secondary", "stas_22_secondary", "stas_23_secondary", "stas_24_secondary", "stas_25_secondary", "stas_26_secondary", "stas_27_secondary", "stas_28_secondary",	"stas_29_secondary", "stas_30_secondary", "stas_31_secondary",	"stas_32_secondary", "stas_33_secondary", "stas_34_secondary", "stas_35_secondary", "stas_36_secondary", "stas_37_secondary", "stas_38_secondary", "stas_39_secondary","stas_40_secondary")])) > 2 ] <- NA
+
+#Get scores of STAS_Secondary
+list(star$stas_secondary_total)
+```
+
+# FAMILISMO
+```{r}
+star$fam_total <- rowSums(star[,c("fam_1_eng", "fam_2_eng", "fam_3_eng", "fam_4_eng", "fam_5_eng", "fam_6_eng", "fam_7_eng", "fam_8_eng", "fam_9_eng", "fam_10_eng", "fam_11_eng", "fam_12_eng", "fam_13_eng", "fam_14_eng", "fam_15_eng")], na.rm = T) 
+
+psych::alpha(star[,c("fam_1_eng", "fam_2_eng", "fam_3_eng", "fam_4_eng", "fam_5_eng", "fam_6_eng", "fam_7_eng", "fam_8_eng", "fam_9_eng", "fam_10_eng", "fam_11_eng", "fam_12_eng", "fam_13_eng", "fam_14_eng", "fam_15_eng")])
+
+#Only score participans who completed 80% 
+star$fam_total [rowSums(is.na(star[,c("fam_1_eng", "fam_2_eng", "fam_3_eng", "fam_4_eng", "fam_5_eng", "fam_6_eng", "fam_7_eng", "fam_8_eng", "fam_9_eng", "fam_10_eng", "fam_11_eng", "fam_12_eng", "fam_13_eng", "fam_14_eng", "fam_15_eng")])) > 2 ] <- NA
+
+#Get Scores of Familismo 
+#View(star[c("record_id", "fam_total")])
+(star$fam_total)
+```
+
+## Familismo Secondary
+```{r}
+#star$fam_secondary_total <-rowSums(star[,c("fam_1_eng_secondary",	"fam_2_eng_secondary",	"fam_3_eng_secondary",	"fam_4_eng_secondary",	"fam_5_eng_secondary",	"fam_6_eng_secondary",	"fam_7_eng_secondary",	"fam_8_eng_secondary",	"fam_9_eng_secondary",	"fam_10_eng_secondary",	"fam_11_eng_secondary",	"fam_12_eng_secondary",	"fam_13_eng_secondary",	"fam_14_eng_secondary", "fam_15_eng_secondary")])
+
+#Only score participants who completed 80%
+#star$fam_secondary_total [rowSums(is.na(star[,c("fam_1_eng_secondary", "fam_2_eng_secondary", "fam_3_eng_secondary", "fam_4_eng_secondary", "fam_5_eng_secondary", "fam_6_eng_secondary", "fam_7_eng_secondary", "fam_8_eng_secondary", "fam_9_eng_secondary", "fam_10_eng_secondary", "fam_11_eng_secondary", "fam_12_eng_secondary", "fam_13_eng_secondary", "fam_14_eng_secondary", "fam_15_eng_secondary")])) > 2 ] <- NA
+
+#Get scores of Familismo Secondary
+#list(star$fam_secondary_total)
+```
+
+# Cultural Values Scale
+```{r}
+#Reverse code Mainstream values 
+#star$macvs_6.r <- car::recode(star$macvs_6,"'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+#star$macvs_16.r <- car::recode(star$macvs_16, "'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+#star$macvs_24.r <- car::recode(star$macvs_24, "'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+#star$macvs_34.r <- car::recode(star$macvs_34, "'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+#star$macvs_43.r <- car::recode(star$macvs_43,"'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+#star$macvs_7.r <- car::recode(#star$macvs_7,"'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+#star$macvs_17.r <-  car::recode(#star$macvs_17,"'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+#star$macvs_26.r <- car::recode(#star$macvs_26,"'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+#star$macvs_35.r <- car::recode(#star$macvs_35,"'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+#star$macvs_33.r <-car::recode(#star$macvs_33,"'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+#star$macvs_35.r <-  car::recode(#star$macvs_35,"'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+#star$macvs_44.r <-  car::recode(#star$macvs_44,"'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+#star$macvs_14.r <- car::recode(#star$macvs_14,"'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+#star$macvs_23.r <- car::recode(#star$macvs_23,"'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+#star$macvs_41.r <- car::recode(#star$macvs_41,"'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+
+#Below codes all Mexican American Values
+#Familism Support
+star$macvs_support <- rowSums(star[,c("macvs_2", "macvs_9", "macvs_20", "macvs_28", "macvs_37", "macvs_46")], na.rm = T )
+star$macvs_support [rowSums(is.na(star[,c("macvs_2", "macvs_9", "macvs_20", "macvs_28", "macvs_37", "macvs_46")])) > 2] <- NA
+psych::alpha(star[,c("macvs_2", "macvs_9", "macvs_20", "macvs_28", "macvs_37", "macvs_46")])
+star$macvs_support
+
+#Familism Obligation
+star$macvs_obligation <- rowSums(star[,c("macvs_3", "macvs_11", "macvs_21", "macvs_29", "macvs_38")], na.rm = T )
+star$macvs_obligation [rowSums(is.na(star[,c("macvs_3", "macvs_11", "macvs_21", "macvs_29", "macvs_38")])) > 2] <- NA
+psych::alpha(star[,c("macvs_3", "macvs_11", "macvs_21", "macvs_29", "macvs_38")])
+star$macvs_obligation
+
+#Familism - Referent
+star$macvs_referent <- rowSums(star[,c("macvs_4", "macvs_12", "macvs_30", "macvs_39", "macvs_47")], na.rm = T )
+star$macvs_referent [rowSums(is.na(star[,c("macvs_4", "macvs_12", "macvs_30", "macvs_39", "macvs_47")])) > 2] <- NA
+psych::alpha(star[,c("macvs_4", "macvs_12", "macvs_30", "macvs_39", "macvs_47")])
+star$macvs_referent
+
+# Respect
+star$macvs_respect <- rowSums(star[,c("macvs_5", "macvs_10", "macvs_15", "macvs_22", "macvs_25", "macvs_31", "macvs_40", "macvs_49")], na.rm = T )
+star$macvs_respect [rowSums(is.na(star[,c("macvs_5", "macvs_10", "macvs_15", "macvs_22", "macvs_25", "macvs_31", "macvs_40", "macvs_49")])) > 2] <- NA
+
+psych::alpha(star[,c("macvs_5", "macvs_10", "macvs_15", "macvs_22", "macvs_25", "macvs_31", "macvs_40", "macvs_49")])
+star$macvs_respect
+
+# Religion
+star$macvs_religion <- rowSums(star[,c("macvs_1", "macvs_8", "macvs_18", "macvs_27", "macvs_36", "macvs_45", "macvs_48")], na.rm = T)
+
+star$macvs_religion [rowSums(is.na(star[,c("macvs_1", "macvs_8", "macvs_18", "macvs_27", "macvs_36", "macvs_45", "macvs_48")])) > 2] <- NA
+psych::alpha(star[,c("macvs_1", "macvs_8", "macvs_18", "macvs_27", "macvs_36", "macvs_45", "macvs_48")])
+star$macvs_religion
+
+#Traditional gender roles
+star$macvs_gender <- rowSums(star[,c("macvs_13", "macvs_19","macvs_32", "macvs_42", "macvs_50")], na.rm = T)
+star$macvs_gender [rowSums(is.na(star[,c("macvs_13", "macvs_19","macvs_32", "macvs_42", "macvs_50")])) > 2] <- NA
+psych::alpha(star[,c("macvs_13", "macvs_19","macvs_32", "macvs_42", "macvs_50")])
+star$macvs_gender
+
+#Below codes all MAINSTREAM Values 
+#Material Success
+star$macvs_material <- rowSums(star[,c("macvs_6", "macvs_16", "macvs_24", "macvs_34", "macvs_43")], na.rm = T)
+star$macvs_material [rowSums(is.na(star[,c("macvs_6", "macvs_16", "macvs_24", "macvs_34", "macvs_43")])) > 2] <- NA
+psych::alpha(star[,c("macvs_6", "macvs_16", "macvs_24", "macvs_34", "macvs_43")])
+star$macvs_material
+
+#Independence & Self Reliance
+star$macvs_independence <- rowSums(star[,c("macvs_7", "macvs_17", "macvs_26", "macvs_35", "macvs_44")], na.rm = T)
+star$macvs_independence [rowSums(is.na(star[,c("macvs_7", "macvs_17", "macvs_26", "macvs_35", "macvs_44")])) > 2] <- NA
+psych::alpha(star[,c("macvs_7", "macvs_17", "macvs_26", "macvs_35", "macvs_44")])
+star$macvs_independence
+
+#Competition & Personal Achievement 
+star$macvs_commpete <- rowSums(star[,c("macvs_14", "macvs_23", "macvs_33", "macvs_41")])
+star$macvs_compete [rowSums(is.na(star[,c("macvs_14", "macvs_23", "macvs_33", "macvs_41")])) > 2] <- NA
+psych::alpha(star[,c("macvs_14", "macvs_23", "macvs_33", "macvs_41")])
+star$macvs_compete
+
+#Get Scores of MACVS
+#star$macvs_total <- rowSums(star[,c("macvs_independence", "macvs_material", "macvs_gender", "macvs_religion", "macvs_respect", "macvs_referent", "macvs_obligation", "macvs_support")], na.rm = T)
+#psych::alpha((star[,c("macvs_independence", "macvs_material", "macvs_gender", "macvs_religion", "macvs_respect", "macvs_referent", "macvs_obligation", "macvs_support")]))
+#star$macvs_total
+
+#Get Scores of MACVS
+star$macvs_total <- rowSums(star[,c("macvs_14", "macvs_23", "macvs_33", "macvs_41","macvs_7", "macvs_17", "macvs_26", "macvs_35", "macvs_44", "macvs_6", "macvs_16", "macvs_24", "macvs_34", "macvs_43", "macvs_13", "macvs_19","macvs_32", "macvs_42", "macvs_50", "macvs_1", "macvs_8", "macvs_18", "macvs_27", "macvs_36", "macvs_45", "macvs_48", "macvs_5", "macvs_10", "macvs_15", "macvs_22", "macvs_25", "macvs_31", "macvs_40", "macvs_49", "macvs_4", "macvs_12", "macvs_30", "macvs_39", "macvs_47","macvs_3", "macvs_11", "macvs_21", "macvs_29", "macvs_38", "macvs_2", "macvs_9", "macvs_20", "macvs_28", "macvs_37", "macvs_46")], na.rm = T)
+
+psych::alpha((star[,c("macvs_14", "macvs_23", "macvs_33", "macvs_41","macvs_7", "macvs_17", "macvs_26", "macvs_35", "macvs_44", "macvs_6", "macvs_16", "macvs_24", "macvs_34", "macvs_43", "macvs_13", "macvs_19","macvs_32", "macvs_42", "macvs_50", "macvs_1", "macvs_8", "macvs_18", "macvs_27", "macvs_36", "macvs_45", "macvs_48", "macvs_5", "macvs_10", "macvs_15", "macvs_22", "macvs_25", "macvs_31", "macvs_40", "macvs_49", "macvs_4", "macvs_12", "macvs_30", "macvs_39", "macvs_47","macvs_3", "macvs_11", "macvs_21", "macvs_29", "macvs_38", "macvs_2", "macvs_9", "macvs_20", "macvs_28", "macvs_37", "macvs_46")]))
+
+star$macvs_total
+
+
+```
+
+## Cultural Values_Secondary
+```{r}
+#star$macvs_secondary_total <- rowSums(star[,c("macvs_1_secondary",	"macvs_2_secondary",	"macvs_3_secondary",	"macvs_4_secondary",	"macvs_5_secondary",	"macvs_6_secondary",	"macvs_7_secondary",	"macvs_8_secondary",	"macvs_9_secondary",	"macvs_10_secondary", "macvs_11_secondary",	"macvs_12_secondary",	"macvs_13_secondary",	"macvs_14_secondary",	"macvs_15_secondary", "macvs_16_secondary",	"macvs_17_secondary",	"macvs_18_secondary",	"macvs_19_secondary",	"macvs_20_secondary",	"macvs_21_secondary",	"macvs_22_secondary",	"macvs_23_secondary",	"macvs_24_secondary",	"macvs_25_secondary",	"macvs_26_secondary",	"macvs_27_secondary",	"macvs_28_secondary",	"macvs_29_secondary",	"macvs_30_secondary",	"macvs_31_secondary",	"macvs_32_secondary", "macvs_33_secondary",	"macvs_34_secondary",	"macvs_35_secondary",	"macvs_36_secondary",	"macvs_37_secondary", "macvs_38_secondary",	"macvs_39_secondary",	"macvs_40_secondary",	"macvs_41_secondary",	"macvs_42_secondary",	"macvs_43_secondary",	"macvs_44_secondary",	"macvs_45_secondary",	"macvs_46_secondary",	"macvs_47_secondary",	"macvs_48_secondary",	"macvs_49_secondary",	"macvs_50_secondary")], na.rm = T)
+
+#Only Score participants who completed 90%
+#star$macvs_secondary_total [rowSums(is.na(star[,c("macvs_1_secondary",	"macvs_2_secondary", "macvs_3_secondary", "macvs_4_secondary", "macvs_5_secondary", "macvs_6_secondary", "macvs_7_secondary", "macvs_8_secondary",	"macvs_9_secondary", "macvs_10_secondary", "macvs_11_secondary", "macvs_12_secondary", "macvs_13_secondary", "macvs_14", "macvs_15_secondary", "macvs_16_secondary", "macvs_17_secondary", "macvs_18_secondary", 	"macvs_19_secondary", "macvs_20_secondary", "macvs_21_secondary", "macvs_22_secondary", "macvs_23_secondary", "macvs_24_secondary", "macvs_25_secondary", "macvs_26_secondary", "macvs_27_secondary", "macvs_28_secondary",	"macvs_29_secondary", "macvs_30_secondary", "macvs_31_secondary", "macvs_32_secondary", "macvs_33_secondary", "macvs_34_secondary", "macvs_35_secondary", "macvs_36_secondary", "macvs_37_secondary", "macvs_38_secondary", 	"macvs_39_secondary", "macvs_40_secondary", "macvs_41_secondary", "macvs_42_secondary", "macvs_43_secondary", "macvs_44_secondary", "macvs_45_secondary", "macvs_46_secondary", "macvs_47_secondary", "macvs_48_secondary","macvs_49_secondary","macvs_50_secondary")])) > 10 ] <- NA
+
+#Get scores of MACVS for secondary 
+#list(star$macvs_secondary_total)
+```
+
+
+# IBQ-R 
+```{r}
+lapply(star[names(star)[grep("ibq_r", names(star))]], table)
+# Looks like some of variables have an 8, which is for Not Applicable
+# As such, we need to make sure that is just counted as missing
+vars <- names(star)[grep("ibq_r", names(star))]
+star[vars] <- sapply(star[vars], function(x) ifelse(x=="8", NA,x))
+# star[star=="8"] <- NA
+
+#Reverse code all variables that need to be reversed
+star$ibq_r_33.r <- car::recode(star$ibq_r_33,"'7'='1'; '6'='2'=; '5'='3'; '4'='4'; '3'='5';'2'='6';'1'='7'; else=NA")
+star$ibq_r_3.r <- car::recode(star$ibq_r_3, "'7'='1'; '6'='2'=; '5'='3'; '4'='4'; '3'='5';'2'='6';'1'='7'; else=NA")
+star$ibq_r_82.r <- car::recode(star$ibq_r_82, "'7'='1'; '6'='2'=; '5'='3'; '4'='4'; '3'='5';'2'='6';'1'='7'; else=NA")
+star$ibq_r_84.r <- car::recode(star$ibq_r_84, "'7'='1'; '6'='2'=; '5'='3'; '4'='4'; '3'='5';'2'='6';'1'='7'; else=NA")
+star$ibq_r_86.r <- car::recode(star$ibq_r_86, "'7'='1'; '6'='2'=; '5'='3'; '4'='4'; '3'='5';'2'='6';'1'='7'; else=NA")
+star$ibq_r_91.r <-car::recode(star$ibq_r_91, "'7'='1'; '6'='2'=; '5'='3'; '4'='4'; '3'='5';'2'='6';'1'='7'; else=NA")
+star$ibq_r_37.r <- car::recode(star$ibq_r_37, "'7'='1'; '6'='2'=; '5'='3'; '4'='4'; '3'='5';'2'='6';'1'='7'; else=NA")
+star$ibq_r_72.r <- car::recode(star$ibq_r_72, "'7'='1'; '6'='2'=; '5'='3'; '4'='4'; '3'='5';'2'='6';'1'='7'; else=NA")
+star$ibq_r_61.r <- car::recode(star$ibq_r_61, "'7'='1'; '6'='2'=; '5'='3'; '4'='4'; '3'='5';'2'='6';'1'='7'; else=NA")
+star$ibq_r_50.r <- car::recode(star$ibq_r_50, "'7'='1'; '6'='2'=; '5'='3'; '4'='4'; '3'='5';'2'='6';'1'='7'; else=NA")
+star$ibq_r_60.r <- car::recode(star$ibq_r_60, "'7'='1'; '6'='2'=; '5'='3'; '4'='4'; '3'='5';'2'='6';'1'='7'; else=NA")
+star$ibq_r_73.r <- car::recode(star$ibq_r_73, "'7'='1'; '6'='2'=; '5'='3'; '4'='4'; '3'='5';'2'='6';'1'='7'; else=NA")
+
+#Activity level
+star$ibqr_activity <- rowSums(star[,c("ibq_r_33.r","ibq_r_34", "ibq_r_35", "ibq_r_39", "ibq_r_54", "ibq_r_55", "ibq_r_70")], na.rm = T)
+star$ibqr_activity [rowSums(is.na(star[,c("ibq_r_33.r","ibq_r_34", "ibq_r_35", "ibq_r_39", "ibq_r_54", "ibq_r_55", "ibq_r_70")])) > 2] <- NA
+psych::alpha(star[,c("ibq_r_33.r","ibq_r_34", "ibq_r_35", "ibq_r_39", "ibq_r_54", "ibq_r_55", "ibq_r_70")])
+star$ibqr_activity
+
+#Distress to limitations
+star$ibqr_distress <- rowSums(star[,c("ibq_r_2", "ibq_r_3.r", "ibq_r_4", "ibq_r_21", "ibq_r_52", "ibq_r_53", "ibq_r_62")], na.rm =T )
+star$ibqr_distress [rowSums(is.na(star[,c("ibq_r_2", "ibq_r_3.r", "ibq_r_4", "ibq_r_21", "ibq_r_52", "ibq_r_53", "ibq_r_62")])) > 2] <- NA
+psych::alpha(star[,c("ibq_r_2", "ibq_r_3.r", "ibq_r_4", "ibq_r_21", "ibq_r_52", "ibq_r_53", "ibq_r_62")])
+star$ibqr_distress 
+
+#Fear
+star$ibqr_fear <- rowSums(star[,c("ibq_r_22", "ibq_r_76", "ibq_r_77", "ibq_r_78", "ibq_r_87", "ibq_r_89")], na.rm = T)
+star$ibqr_fear [rowSums(is.na(star[,c("ibq_r_22", "ibq_r_76", "ibq_r_77", "ibq_r_78", "ibq_r_87", "ibq_r_89")])) > 2] <- NA
+psych::alpha(star[,c("ibq_r_22", "ibq_r_76", "ibq_r_77", "ibq_r_78", "ibq_r_87", "ibq_r_89")])
+star$ibqr_fear
+
+#Duration of Orienting
+star$ibqr_orient <- rowSums(star[,c("ibq_r_5", "ibq_r_6", "ibq_r_7", "ibq_r_8", "ibq_r_10", "ibq_r_25")], na.rm = T)
+star$ibqr_orient [rowSums(is.na(star[,c("ibq_r_5", "ibq_r_6", "ibq_r_7", "ibq_r_8", "ibq_r_10", "ibq_r_25")])) > 2] <- NA
+psych::alpha(star[,c("ibq_r_5", "ibq_r_6", "ibq_r_7", "ibq_r_8", "ibq_r_10", "ibq_r_25")])
+star$ibqr_orient
+
+#Smiling and laughter
+star$ibqr_smile <- rowSums(star[,c("ibq_r_9", "ibq_r_11", "ibq_r_12", "ibq_r_40", "ibq_r_42", "ibq_r_43", "ibq_r_65")], na.rm = T)
+star$ibqr_smile [rowSums(is.na(star[,c("ibq_r_9", "ibq_r_11", "ibq_r_12", "ibq_r_40", "ibq_r_42", "ibq_r_43", "ibq_r_65")])) > 2] <- NA
+psych::alpha(star[,c("ibq_r_9", "ibq_r_11", "ibq_r_12", "ibq_r_40", "ibq_r_42", "ibq_r_43", "ibq_r_65")])
+star$ibqr_smile
+
+#High pleasure
+star$ibqr_highpleasure <- rowSums(star[,c("ibq_r_16", "ibq_r_44", "ibq_r_45", "ibq_r_46", "ibq_r_47", "ibq_r_48", "ibq_r_49")], na.rm = T)
+star$ibqr_highpleasure [rowSums(is.na(star[,c("ibq_r_16", "ibq_r_44", "ibq_r_45", "ibq_r_46", "ibq_r_47", "ibq_r_48", "ibq_r_49")])) > 2] <- NA
+psych::alpha(star[,c("ibq_r_16", "ibq_r_44", "ibq_r_45", "ibq_r_46", "ibq_r_47", "ibq_r_48", "ibq_r_49")])
+#View(star[,c("record_id", "ibqr_highpleasure")])
+
+#Low pleasure
+star$ibqr_lowpleasure <- rowSums(star[,c("ibq_r_13", "ibq_r_14", "ibq_r_15", "ibq_r_17", "ibq_r_18", "ibq_r_19", "ibq_r_67")], na.rm = T)
+star$ibqr_lowpleasure [rowSums(is.na(star[,c("ibq_r_13", "ibq_r_14", "ibq_r_15", "ibq_r_17", "ibq_r_18", "ibq_r_19", "ibq_r_67")])) > 2] <- NA
+psych::alpha(star[,c("ibq_r_13", "ibq_r_14", "ibq_r_15", "ibq_r_17", "ibq_r_18", "ibq_r_19", "ibq_r_67")])
+star$ibqr_lowpleasure
+
+#Soothability
+star$ibqr_soothe <- rowSums(star[,c("ibq_r_81", "ibq_r_82.r", "ibq_r_84.r", "ibq_r_85", "ibq_r_86.r", "ibq_r_91.r")], na.rm = T)
+star$ibqr_soothe [rowSums(is.na(star[,c("ibq_r_81", "ibq_r_82.r", "ibq_r_84.r", "ibq_r_85", "ibq_r_86.r", "ibq_r_91.r")])) > 2] <- NA
+psych::alpha(star[,c("ibq_r_81", "ibq_r_82.r", "ibq_r_84.r", "ibq_r_85", "ibq_r_86.r", "ibq_r_91.r")])
+#View(star[,c("record_id", "ibqr_soothe")])
+star$ibqr_soothe
+
+#Falling
+star$ibqr_fall <- rowSums(star[,c("ibq_r_36", "ibq_r_37.r", "ibq_r_63", "ibq_r_71", "ibq_r_72.r")], na.rm = T)
+star$ibqr_fall [rowSums(is.na(star[,c("ibq_r_36", "ibq_r_37.r", "ibq_r_63", "ibq_r_71", "ibq_r_72.r")])) > 2] <- NA
+psych::alpha(star[,c("ibq_r_36", "ibq_r_37.r", "ibq_r_63", "ibq_r_71", "ibq_r_72.r")])
+star$ibqr_fall
+
+#cuddle
+star$ibqr_cuddle <- rowSums(star[,c("ibq_r_61.r", "ibq_r_50.r", "ibq_r_51", "ibq_r_59", "ibq_r_60.r", "ibq_r_73.r")], na.rm = T)
+star$ibqr_cuddle [rowSums(is.na(star[,c("ibq_r_61.r", "ibq_r_50.r", "ibq_r_51", "ibq_r_59", "ibq_r_60.r", "ibq_r_73.r")])) > 2] <- NA
+psych::alpha(star[,c("ibq_r_61.r", "ibq_r_50.r", "ibq_r_51", "ibq_r_59", "ibq_r_60.r", "ibq_r_73.r")])
+star$ibqr_cuddle
+
+#Perceptual sensitivity
+star$ibqr_percept <- rowSums(star[,c("ibq_r_20", "ibq_r_27", "ibq_r_28", "ibq_r_29", "ibq_r_30", "ibq_r_31")], na.rm = T)
+star$ibqr_percept [rowSums(is.na(star[,c("ibq_r_20", "ibq_r_27", "ibq_r_28", "ibq_r_29", "ibq_r_30", "ibq_r_31")])) > 2] <- NA
+psych::alpha(star[,c("ibq_r_20", "ibq_r_27", "ibq_r_28", "ibq_r_29", "ibq_r_30", "ibq_r_31")])
+star$ibqr_percept
+
+#Sadness
+star$ibqr_sad <- rowSums(star[,c("ibq_r_64", "ibq_r_74", "ibq_r_75", "ibq_r_32", "ibq_r_79", "ibq_r_80")], na.rm = T)
+star$ibqr_sad [rowSums(is.na(star[,c("ibq_r_64", "ibq_r_74", "ibq_r_75", "ibq_r_32", "ibq_r_79", "ibq_r_80")])) > 2] <- NA
+psych::alpha(star[,c("ibq_r_64", "ibq_r_74", "ibq_r_75", "ibq_r_32", "ibq_r_79", "ibq_r_80")])
+star$ibqr_sad
+
+#Approach
+star$ibqr_approach <- rowSums(star[,c("ibq_r_23", "ibq_r_24", "ibq_r_68", "ibq_r_69", "ibq_r_88", "ibq_r_90")], na.rm = T)
+star$ibqr_approach [rowSums(is.na(star[,c("ibq_r_23", "ibq_r_24", "ibq_r_68", "ibq_r_69", "ibq_r_88", "ibq_r_90")])) > 2] <- NA
+psych::alpha(star[,c("ibq_r_23", "ibq_r_24", "ibq_r_68", "ibq_r_69", "ibq_r_88", "ibq_r_90")])
+star$ibqr_approach
+
+#Vocal reactivity
+star$ibqr_vocal <- rowSums(star[,c("ibq_r_1", "ibq_r_26", "ibq_r_41", "ibq_r_56", "ibq_r_57", "ibq_r_58", "ibq_r_66")], na.rm = T)
+star$ibqr_vocal [rowSums(is.na(star[,c("ibq_r_1", "ibq_r_26", "ibq_r_41", "ibq_r_56", "ibq_r_57", "ibq_r_58", "ibq_r_66")])) > 2] <- NA
+psych::alpha(star[,c("ibq_r_1", "ibq_r_26", "ibq_r_41", "ibq_r_56", "ibq_r_57", "ibq_r_58", "ibq_r_66")])
+star$ibqr_vocal
+
+#THESE ARE THE MAIN VARIABLES USED FOR SCORING
+#Orienting/Regulation
+star$ibqr_orienting <- rowMeans(star[,c("ibq_r_13", "ibq_r_14", "ibq_r_15", "ibq_r_17", "ibq_r_18", "ibq_r_19", "ibq_r_67", "ibq_r_61.r", "ibq_r_50.r", "ibq_r_51", "ibq_r_59", "ibq_r_60.r", "ibq_r_73.r", "ibq_r_5", "ibq_r_6", "ibq_r_7", "ibq_r_8", "ibq_r_10", "ibq_r_25", "ibq_r_2", "ibq_r_3.r", "ibq_r_4", "ibq_r_21", "ibq_r_52", "ibq_r_53", "ibq_r_62")], na.rm = T)
+psych::alpha(star[,c("ibq_r_13", "ibq_r_14", "ibq_r_15", "ibq_r_17", "ibq_r_18", "ibq_r_19", "ibq_r_67", "ibq_r_61.r", "ibq_r_50.r", "ibq_r_51", "ibq_r_59", "ibq_r_60.r", "ibq_r_73.r", "ibq_r_5", "ibq_r_6", "ibq_r_7", "ibq_r_8", "ibq_r_10", "ibq_r_25", "ibq_r_2", "ibq_r_3.r", "ibq_r_4", "ibq_r_21", "ibq_r_52", "ibq_r_53", "ibq_r_62")])
+star$ibqr_orienting
+
+#Surgency
+star$ibqr_surgency <- rowMeans(star[,c("ibq_r_64", "ibq_r_74", "ibq_r_75", "ibq_r_32", "ibq_r_79", "ibq_r_80", "ibq_r_16", "ibq_r_44", "ibq_r_45", "ibq_r_46", "ibq_r_47", "ibq_r_48", "ibq_r_49", "ibq_r_9", "ibq_r_11", "ibq_r_12", "ibq_r_40", "ibq_r_42", "ibq_r_43", "ibq_r_65", "ibq_r_33.r", "ibq_r_34", "ibq_r_35", "ibq_r_39", "ibq_r_54", "ibq_r_55", "ibq_r_70", "ibq_r_20", "ibq_r_27", "ibq_r_28", "ibq_r_29", "ibq_r_30", "ibq_r_31")], na.rm =T )
+psych::alpha(star[,c("ibq_r_64", "ibq_r_74", "ibq_r_75", "ibq_r_32", "ibq_r_79", "ibq_r_80", "ibq_r_16", "ibq_r_44", "ibq_r_45", "ibq_r_46", "ibq_r_47", "ibq_r_48", "ibq_r_49", "ibq_r_9", "ibq_r_11", "ibq_r_12", "ibq_r_40", "ibq_r_42", "ibq_r_43", "ibq_r_65", "ibq_r_33.r", "ibq_r_34", "ibq_r_35", "ibq_r_39", "ibq_r_54", "ibq_r_55", "ibq_r_70", "ibq_r_20", "ibq_r_27", "ibq_r_28", "ibq_r_29", "ibq_r_30", "ibq_r_31")])
+star$ibqr_surgency
+
+#Negative affect
+#Reverse code falling variables
+star$ibq_r_36.r <- car::recode(star$ibq_r_36,"'7'='1'; '6'='2'=; '5'='3'; '4'='4'; '3'='5';'2'='6';'1'='7'; else=NA")
+star$ibq_r_63.r <- car::recode(star$ibq_r_63,"'7'='1'; '6'='2'=; '5'='3'; '4'='4'; '3'='5';'2'='6';'1'='7'; else=NA")
+star$ibq_r_71.r <- car::recode(star$ibq_r_71,"'7'='1'; '6'='2'=; '5'='3'; '4'='4'; '3'='5';'2'='6';'1'='7'; else=NA")
+star$ibqr_fall <- rowSums(star[,c("ibq_r_36", "ibq_r_37.r", "ibq_r_63", "ibq_r_71", "ibq_r_72.r")], na.rm = T)
+
+star$ibqr_negaffect <- rowMeans(star[,c("ibq_r_13", "ibq_r_14", "ibq_r_15", "ibq_r_17", "ibq_r_18", "ibq_r_19", "ibq_r_67", "ibq_r_61.r", "ibq_r_50.r", "ibq_r_51", "ibq_r_59", "ibq_r_60.r", "ibq_r_73.r", "ibq_r_5", "ibq_r_6", "ibq_r_7", "ibq_r_8", "ibq_r_10", "ibq_r_25", "ibq_r_81", "ibq_r_82.r", "ibq_r_84.r", "ibq_r_85", "ibq_r_86.r", "ibq_r_91.r")], na.rm = T)
+psych::alpha(star[,c("ibq_r_13","ibq_r_14", "ibq_r_15", "ibq_r_17", "ibq_r_18", "ibq_r_19", "ibq_r_67", "ibq_r_61.r", "ibq_r_50.r", "ibq_r_51", "ibq_r_59", "ibq_r_60.r", "ibq_r_73.r", "ibq_r_5", "ibq_r_6", "ibq_r_7", "ibq_r_8", "ibq_r_10", "ibq_r_25", "ibq_r_81", "ibq_r_82.r", "ibq_r_84.r", "ibq_r_85", "ibq_r_86.r", "ibq_r_91.r")])
+star$ibqr_negaffect
+
+#Get scores of IBQ-R TOTAL
+#list(star$ibq_r_total)
+```
+
+## IBQR_Secondary
+```{r}
+#Recode variables 
+#star$ibq_r_33_secondary.r <- car::recode(star$ibq_r_33_secondary,"'7'='1'; '6'='2'=; '5'='3'; '4'='4'; '3'='5';'2'='6';'1'='7'; else=NA")
+#star$ibq_r_3_secondary.r <- car::recode(star$ibq_r_3_secondary, "'7'='1'; '6'='2'=; '5'='3'; '4'='4'; '3'='5';'2'='6';'1'='7'; else=NA")
+star$ibq_r_82_secondary.r <- car::recode(star$ibq_r_82_secondary, "'7'='1'; '6'='2'=; '5'='3'; '4'='4'; '3'='5';'2'='6';'1'='7'; else=NA")
+#star$ibq_r_84_secondary.r <- car::recode(star$ibq_r_84_secondary, "'7'='1'; '6'='2'=; '5'='3'; '4'='4'; '3'='5';'2'='6';'1'='7'; else=NA")
+#star$ibq_r_86_secondary.r <- car::recode(star$ibq_r_86_secondary, "'7'='1'; '6'='2'=; '5'='3'; '4'='4'; '3'='5';'2'='6';'1'='7'; else=NA")
+#star$ibq_r_91_secondary.r <-car::recode(star$ibq_r_91_secondary, "'7'='1'; '6'='2'=; '5'='3'; '4'='4'; '3'='5';'2'='6';'1'='7'; else=NA")
+#star$ibq_r_37_secondary.r <- car::recode(star$ibq_r_37_secondary, "'7'='1'; '6'='2'=; '5'='3'; '4'='4'; '3'='5';'2'='6';'1'='7'; else=NA")
+#star$ibq_r_72_secondary.r <- car::recode(star$ibq_r_72_secondary, "'7'='1'; '6'='2'=; '5'='3'; '4'='4'; '3'='5';'2'='6';'1'='7'; else=NA")
+#star$ibq_r_61_secondary.r <- car::recode(star$ibq_r_6_secondary, "'7'='1'; '6'='2'=; '5'='3'; '4'='4'; '3'='5';'2'='6';'1'='7'; else=NA")
+#star$ibq_r_50_secondary.r <- car::recode(star$ibq_r_50_secondary, "'7'='1'; '6'='2'=; '5'='3'; '4'='4'; '3'='5';'2'='6';'1'='7'; else=NA")
+#star$ibq_r_60_secondary.r <- car::recode(star$ibq_r_60_secondary, "'7'='1'; '6'='2'=; '5'='3'; '4'='4'; '3'='5';'2'='6';'1'='7'; else=NA")
+star$ibq_r_73_secondary.r <- car::recode(star$ibq_r_73_secondary, "'7'='1'; '6'='2'=; '5'='3'; '4'='4'; '3'='5';'2'='6';'1'='7'; else=NA")
+
+#Activity level
+star$ibqr_secondary_activity <- rowSums(star[,c("ibq_r_33_secondary.r","ibq_r_34_secondary", "ibq_r_35_secondary", "ibq_r_39_secondary", "ibq_r_54_secondary", "ibq_r_55_secondary", "ibq_r_70_secondary")], na.rm = T)
+
+psych::alpha(star[,c("ibq_r_33_secondary.r","ibq_r_34_secondary", "ibq_r_35_secondary", "ibq_r_39_secondary", "ibq_r_54_secondary", "ibq_r_55_secondary", "ibq_r_7_secondary")])
+View(star[,c("record_id", "ibqr_activity_secondary")])
+
+#Distress to limitations
+star$ibqr_distress_secondary <- rowSums(star[,c("ibq_r_2_secondary", "ibq_r_3_secondary.r", "ibq_r_4_secondary", "ibq_r_21_secondary", "ibq_r_52_secondary", "ibq_r_53_secondary", "ibq_r_62_secondary")], na.rm =T )
+psych::alpha(star[,c("ibq_r_2_secondary", "ibq_r_3_secondary.r", "ibq_r_4_secondary", "ibq_r_21_secondary", "ibq_r_52_secondary", "ibq_r_53_secondary", "ibq_r_62_secondary")])
+View(star[,c("record_id", "ibqr_distress_secondary")])
+
+
+#Fear
+star$ibqr_fear_secondary <- rowSums(star[,c("ibq_r_22_secondary", "ibq_r_76_secondary", "ibq_r_77", "ibq_r_78_secondary", "ibq_r_87_secondary", "ibq_r_89")], na.rm = T)
+psych::alpha(star[,c("ibq_r_22_secondary", "ibq_r_76_secondary", "ibq_r_77_secondary", "ibq_r_78_secondary", "ibq_r_87_secondary", "ibq_r_89_secondary")])
+View(star[,c("record_id", "ibqr_orient_secondary")])
+
+#Duration of Orienting
+star$ibqr_orient_secondary <- rowSums(star[,c("ibq_r_5_secondary", "ibq_r_6_secondary", "ibq_r_7_secondary", "ibq_r_8_secondary", "ibq_r_10_secondary", "ibq_r_25_secondary")], na.rm = T)
+psych::alpha(star[,c("ibq_r_5_secondary", "ibq_r_6_secondary", "ibq_r_7_secondary", "ibq_r_8_secondary", "ibq_r_10_secondary", "ibq_r_25_secondary")])
+View(star[,c("record_id", "ibqr_orient_secondary")])
+
+#Smiling and laughter
+star$ibqr_smile_secondary <- rowSums(star[,c("ibq_r_9_secondary", "ibq_r_11_secondary", "ibq_r_12_secondary", "ibq_r_40_secondary", "ibq_r_42_secondary", "ibq_r_43_secondary", "ibq_r_65_secondary")], na.rm = T)
+psych::alpha(star[,c("ibq_r_9_secondary", "ibq_r_11_secondary", "ibq_r_12_secondary", "ibq_r_40_secondary", "ibq_r_42_secondary", "ibq_r_43_secondary", "ibq_r_65_secondary")])
+View(star[,c("record_id", "ibqr_smile_secondary")])
+
+#High pleasure
+star$ibqr_highpleasure_secondary <- rowSums(star[,c("ibq_r_16_secondary", "ibq_r_44_secondary", "ibq_r_45_secondary", "ibq_r_46_secondary", "ibq_r_47_secondary", "ibq_r_48_secondary", "ibq_r_49_secondary")], na.rm = T)
+psych::alpha(star[,c("ibq_r_16_secondary", "ibq_r_44_secondary", "ibq_r_45_secondary", "ibq_r_46_secondary", "ibq_r_47_secondary", "ibq_r_48_secondary", "ibq_r_49_secondary")])
+View(star[,c("record_id", "ibqr_highpleasure_secondary")])
+
+#Low pleasure
+star$ibqr_lowpleasure_secondary <- rowSums(star[,c("ibq_r_13_secondary", "ibq_r_14_secondary", "ibq_r_15_secondary", "ibq_r_17_secondary", "ibq_r_18_secondary", "ibq_r_19_secondary", "ibq_r_67_secondary")], na.rm = T)
+psych::alpha(star[,c("ibq_r_13_secondary", "ibq_r_14_secondary", "ibq_r_15_secondary", "ibq_r_17_secondary", "ibq_r_18_secondary", "ibq_r_19_secondary", "ibq_r_67_secondary")])
+View(star[,c("record_id", "ibqr_lowpleasure_secondary")])
+
+#Soothability
+star$ibqr_soothe <- rowSums(star[,c("ibq_r_81_secondary", "ibq_r_82_secondary.r", "ibq_r_84_secondary.r", "ibq_r_85_secondary", "ibq_r_86_secondary.r", "ibq_r_91_secondary.r")], na.rm = T)
+psych::alpha(star[,c("ibq_r_81_secondary", "ibq_r_82_secondary.r", "ibq_r_84_secondary.r", "ibq_r_85_secondary", "ibq_r_86_secondary.r", "ibq_r_91_secondary.r")])
+View(star[,c("record_id", "ibqr_soothe_secondary")])
+
+#Falling
+star$ibqr_fall_secondary <- rowSums(star[,c("ibq_r_36_secondary", "ibq_r_37_secondary.r", "ibq_r_63_secondary", "ibq_r_71_secondary", "ibq_r_72_secondary.r")], na.rm = T)
+psych::alpha(star[,c("ibq_r_36_secondary", "ibq_r_37_secondary.r", "ibq_r_63_secondary", "ibq_r_71_secondary", "ibq_r_72_secondary.r")])
+View(star[,c("record_id", "ibqr_fall_secondary")])
+
+#cuddle
+star$ibqr_cuddle_secondary <- rowSums(star[,c("ibq_r_61_secondary.r", "ibq_r_50_secondary.r", "ibq_r_51_secondary", "ibq_r_59_secondary", "ibq_r_60_secondary.r", "ibq_r_73_secondary.r")], na.rm = T)
+psych::alpha(star[,c("ibq_r_61_secondary.r", "ibq_r_50_secondary.r", "ibq_r_51_secondary", "ibq_r_59_secondary", "ibq_r_60_secondary.r", "ibq_r_73_secondary.r")])
+View(star[,c("record_id", "ibqr_cuddle_secondary")])
+
+#Perceptual sensitivity
+star$ibqr_percept_secondary <- rowSums(star[,c("ibq_r_20_secondary", "ibq_r_27_secondary", "ibq_r_28_secondary", "ibq_r_29_secondary", "ibq_r_30_secondary", "ibq_r_31_secondary")], na.rm = T)
+psych::alpha(star[,c("ibq_r_20_secondary", "ibq_r_27_secondary", "ibq_r_28_secondary", "ibq_r_29_secondary", "ibq_r_30_secondary", "ibq_r_31_secondary")])
+View(star[,c("record_id", "ibqr_percept_secondary")])
+
+#Sadness
+star$ibqr_sad_secondary <- rowSums(star[,c("ibq_64_secondary", "ibq_r_74", "ibq_r_75", "ibq_r_32", "ibq_r_79", "ibq_r_80")], na.rm = T)
+psych::alpha(star[,c("ibq_64", "ibq_r_74", "ibq_r_75", "ibq_r_32", "ibq_r_79", "ibq_r_80")])
+View(star[,c("record_id", "ibqr_sad_secondary")])
+
+#Approach
+star$ibqr_approach_secondary <- rowSums(star[,c("ibq_r_64", "ibq_r_74", "ibq_r_75", "ibq_r_32", "ibq_r_79", "ibq_r_80")], na.rm = T)
+psych::alpha(star[,c("ibq_64", "ibq_r_74", "ibq_r_75", "ibq_r_32", "ibq_r_79", "ibq_r_80")])
+View(star[,c("record_id", "ibqr_approach_secondary")])
+
+#Vocal reactivity
+star$ibqr_vocal_secondary <- rowSums(star[,c("ibq_r_1", "ibq_r_26", "ibq_r_41", "ibq_r_56", "ibq_r_57", "ibq_r_58", "ibq_r_66")], na.rm = T)
+psych::alpha(star[,c("ibq_r_1", "ibq_r_26", "ibq_r_41", "ibq_r_56", "ibq_r_57", "ibq_r_58", "ibq_r_66")])
+View(star[,c("record_id", "ibqr_vocal_secondary")])
+
+
+star$ibq_r_total [rowSums(is.na(star[,c("ibq_r_1","ibq_r_2","ibq_r_3", "ibq_r_4", "ibq_r_5","ibq_r_6","ibq_r_7","ibq_r_8",	"ibq_r_9","ibq_r_10","ibq_r_11","ibq_r_12","ibq_r_13","ibq_r_14","ibq_r_15","ibq_r_16", "ibq_r_17", "ibq_r_18", "ibq_r_19",	"ibq_r_20",	"ibq_r_21",	"ibq_r_22",	"ibq_r_23",	"ibq_r_24",	"ibq_r_25",	"ibq_r_26",	"ibq_r_27", "ibq_r_28",	"ibq_r_29", "ibq_r_30",	"ibq_r_31",	"ibq_r_32",	"ibq_r_33",	"ibq_r_34",	"ibq_r_35",	"ibq_r_36",	"ibq_r_37", "ibq_r_38",	"ibq_r_39",	"ibq_r_40",	"ibq_r_41",	"ibq_r_42",	"ibq_r_43","ibq_r_44", "ibq_r_45",	"ibq_r_46",	"ibq_r_47",	"ibq_r_48",	"ibq_r_49","ibq_r_50","ibq_r_51","ibq_r_52","ibq_r_53","ibq_r_54",	"ibq_r_55",	"ibq_r_56",	"ibq_r_57",	"ibq_r_58",	"ibq_r_59","ibq_r_60","ibq_r_61","ibq_r_62","ibq_r_63","ibq_r_64", "ibq_r_65", "ibq_r_66",	"ibq_r_67",	"ibq_r_68",	"ibq_r_69","ibq_r_70", "ibq_r_71", "ibq_r_72","ibq_r_73",	"ibq_r_74","ibq_r_75",	"ibq_r_76", "ibq_r_77",	"ibq_r_78",	"ibq_r_79",	"ibq_r_80",	"ibq_r_81",	"ibq_r_82",	"ibq_r_83", "ibq_r_84", "ibq_r_85", "ibq_r_86","ibq_r_87","ibq_r_88",	"ibq_r_89","ibq_r_90","ibq_r_91")])) > 2 ] <- NA
+
+#Get scores of IBQ-R
+list(star$ibq_r_total)
+
+#Only score participants who completed 80% or more
+star$ibq_r_total_secondary [rowSums(is.na(star[,c("ibq_r_1_secondary",	"ibq_r_2_secondary",	"ibq_r_3_secondary",	"ibq_r_4_secondary",	"ibq_r_5_secondary",	"ibq_r_6_secondary",	"ibq_r_7_secondary",	"ibq_r_8_secondary",	"ibq_r_9_secondary",	"ibq_r_10_secondary",	"ibq_r_11_secondary",	"ibq_r_12_secondary",	"ibq_r_13_secondary",	"ibq_r_14_secondary",	"ibq_r_15_secondary",	"ibq_r_16_secondary",	"ibq_r_17_secondary",	"ibq_r_18_secondary",	"ibq_r_19_secondary",	"ibq_r_20_secondary",	"ibq_r_21_secondary",	"ibq_r_22_secondary",	"ibq_r_23_secondary",	"ibq_r_24_secondary",	"ibq_r_25_secondary",	"ibq_r_26_secondary",	"ibq_r_27_secondary",	"ibq_r_28_secondary",	"ibq_r_29_secondary",	"ibq_r_30_secondary",	"ibq_r_31_secondary",	"ibq_r_32_secondary",	"ibq_r_33_secondary",	"ibq_r_34_secondary",	"ibq_r_35_secondary",	"ibq_r_36_secondary",	"ibq_r_37_secondary",	"ibq_r_38_secondary",	"ibq_r_39_secondary",	"ibq_r_40_secondary",	"ibq_r_41_secondary",	"ibq_r_42_secondary",	"ibq_r_43_secondary",	"ibq_r_44_secondary",	"ibq_r_45_secondary",	"ibq_r_46_secondary",	"ibq_r_47_secondary",	"ibq_r_48_secondary",	"ibq_r_49_secondary",	"ibq_r_50_secondary",	"ibq_r_51_secondary",	"ibq_r_52_secondary",	"ibq_r_53_secondary",	"ibq_r_54_secondary",	"ibq_r_55_secondary",	"ibq_r_56_secondary",	"ibq_r_57_secondary",	"ibq_r_58_secondary",	"ibq_r_59_secondary",	"ibq_r_60_secondary",	"ibq_r_61_secondary",	"ibq_r_62_secondary",	"ibq_r_63_secondary",	"ibq_r_64_secondary",	"ibq_r_65_secondary",	"ibq_r_66_secondary",	"ibq_r_67_secondary",	"ibq_r_68_secondary",	"ibq_r_69_secondary",	"ibq_r_70_secondary",	"ibq_r_71_secondary",	"ibq_r_72_secondary",	"ibq_r_73_secondary",	"ibq_r_74_secondary",	"ibq_r_75_secondary",	"ibq_r_76_secondary",	"ibq_r_77_secondary",	"ibq_r_78_secondary",	"ibq_r_79_secondary",	"ibq_r_80_secondary",	"ibq_r_81_secondary",	"ibq_r_82_secondary",	"ibq_r_83_secondary",	"ibq_r_84_secondary",	"ibq_r_85_secondary",	"ibq_r_86_secondary", "ibq_r_87_secondary",	"ibq_r_88_secondary", "ibq_r_89_secondary",	"ibq_r_90_secondary",	"ibq_r_91_secondary")])) > 2 ] <- NA
+
+#Get IBQ_R Scores for Secondary
+list(star$ibq_r_total_secondary)
+```
+
+# RALES-B
+```{r}
+star$rales_total <- rowSums(star[,c("rales1_tc", "rales2_pc",	"rales3_pc",	"rales4_pc",	"rales5_tc",	"rales6_tc",	"rales7_tc",	"rales8_tc",	"rales9_tc")], na.rm = T)
+
+psych::alpha(star[,c("rales1_tc", "rales2_pc",	"rales3_pc",	"rales4_pc",	"rales5_tc",	"rales6_tc",	"rales7_tc",	"rales8_tc",	"rales9_tc")])
+
+#Get scores of participants who completed 80% or more
+star$rales_total[rowSums(is.na(star[,c("rales1_tc", "rales2_pc", "rales3_pc", "rales4_pc", "rales5_tc", "rales6_tc", "rales7_tc", "rales8_tc", "rales9_tc")])) > 2 ] <- NA
+
+#Get scores of RALES-B
+#View(star[,c("record_id", "rales_total")])
+list(star$rales_total)
+```
+
+## RALES-B_Secondary
+```{r}
+star$rales_total_secondary <- rowSums(star[,c("rales1_tc_secondary",	"rales2_pc_secondary",	"rales3_pc_secondary",	"rales4_pc_secondary",	"rales5_tc_secondary",	"rales6_tc_secondary", "rales7_tc_secondary",	"rales8_tc_secondary",	"rales9_tc_secondary")], na.rm = T)
+
+#Get scores of participants who completed 90% or more
+star$rales_total[rowSums(is.na(star[,c("rales1_tc_secondary", "rales2_pc_secondary", "rales3_pc_secondary", "rales4_pc_secondary", "rales5_tc_secondary", "rales6_tc_secondary", "rales7_tc_secondary", "rales8_tc_secondary", "rales9_tc_secondary")])) > 1 ] <- NA
+
+#Get scores of RALES-B_Secondary
+View(star[,c("record_id", "rales_total_secondary")])
+list(star$rales_total_secondary)
+```
+
+# QUIC-5 
+```{r}
+###Reverse code QUIC-5
+#Reverse scoring these items: 1, 4
+star$quic_5_1.r <- car::recode(star$quic_5_1, "'0' = '1'; '1' = '0'")
+star$quic_5_4.r <- car::recode(star$quic_5_4, "'0' = '1'; '1' = '0'")
+star$quic5_total <- rowSums(star[,c("quic_5_1.r", "quic_5_2",	"quic_5_3",	"quic_5_4.r", "quic_5_5")], na.rm = T)
+
+#identify missing rows
+missing_rows <- rowSums(is.na(star[, c("quic_5_1.r", "quic_5_2", "quic_5_3", "quic_5_4.r", "quic_5_5")])) > 0
+
+#filter data
+completed_quic_data <- star[!missing_rows,]
+
+#conduct analysis
+psych::alpha(star[, c("quic_5_1.r", "quic_5_2", "quic_5_3", "quic_5_4.r", "quic_5_5")])
+
+#Only score participants who have completed 
+star$quic5_total [rowSums(is.na(star[,c("quic_5_1.r", "quic_5_2", "quic_5_3", "quic_5_4.r", "quic_5_5")]))]
+
+#Get scores of QUIC-5
+#View(star[,c("record_id", "quic5_total")])
+list(star$quic5_total)
+```
+
+## QUIC-5_Secondary
+```{r,warning = FALSE, message = FALSE}
+###Reverse code QUIC-5
+#Reverse scoring these items: 1, 4
+star$quic_5_1_secondary.r <- car::recode(star$quic_5_1_secondary, "'0' = '1'; '1' = '0'")
+star$quic_5_4_secondary.r <- car::recode(star$quic_5_4_secondary, "'0' = '1'; '1' = '0'")
+star$quic5_secondary_total <- rowSums(star[,c("quic_5_1_secondary.r", "quic_5_2_secondary",	"quic_5_3_secondary",	"quic_5_4_secondary.r", "quic_5_5_secondary")], na.rm = T)
+
+#identify missing rows
+missing_rows <- rowSums(is.na(star[, c("quic_5_1_secondary.r", "quic_5_2_secondary", "quic_5_3_secondary", "quic_5_4_secondary.r", "quic_5_5_secondary")])) > 0
+
+#conduct analysis
+psych::alpha(star[, c("quic_5_1_secondary.r", "quic_5_2_secondary",	"quic_5_3_secondary",	"quic_5_4_secondary.r", "quic_5_5_secondary")])
+
+#Only score participants who have completed 210%
+star$quic5_secondary_total [rowSums(is.na(star[,c("quic_5_1_secondary.r", "quic_5_2_secondary", "quic_5_3_secondary", "quic_5_4_secondary.r", "quic_5_5_secondary")]))]
+
+#Get scores of QUIC-5
+View(star[,c("record_id", "quic5_secondary_total")])
+list(star$quic5_secondary_total)
+```
+
+# CHAOS
+```{r}
+###Reverse code CHAOS
+#Reverse scoring these items 1, 2, 4, 12, 14, 15
+star$chaos_1.r <- car::recode(star$chaos_1," '0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star$chaos_2.r <- car::recode(star$chaos_2," '0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star$chaos_4.r <- car::recode(star$chaos_4,"'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star$chaos_7.r <- car::recode(star$chaos_7,"'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star$chaos_12.r <- car::recode(star$chaos_12,"'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star$chaos_14.r <- car:: recode(star$chaos_14,"'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star$chaos_15.r <- car::recode(star$chaos_15, "'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star$chaos_total <- rowSums(star[,c("chaos_1.r", "chaos_2.r","chaos_3", "chaos_4.r", "chaos_5", "chaos_6",	"chaos_7.r",	"chaos_8","chaos_9","chaos_10",	"chaos_11", "chaos_12.r", "chaos_13",	"chaos_14.r","chaos_15.r")], na.rm = T)
+
+#Get scores of CHAOS
+star$chaos_total <-rowSums(star[,c("chaos_1.r", "chaos_2.r","chaos_3", "chaos_4.r", "chaos_5", "chaos_6",	"chaos_7.r",	"chaos_8","chaos_9","chaos_10",	"chaos_11", "chaos_12.r",	"chaos_13",	"chaos_14.r","chaos_15.r")])
+psych::alpha(star[,c("chaos_1.r", "chaos_2.r","chaos_3", "chaos_4.r", "chaos_5", "chaos_6",	"chaos_7.r",	"chaos_8","chaos_9","chaos_10",	"chaos_11", "chaos_12.r",	"chaos_13",	"chaos_14.r","chaos_15.r")])
+
+#Only score participants who have completed >80% of questionnaires
+star$chaos_total[rowSums(is.na(star[,c("chaos_1.r", "chaos_2.r","chaos_3", "chaos_4.r", "chaos_5", "chaos_6",	"chaos_7.r",	"chaos_8","chaos_9","chaos_10",	"chaos_11", "chaos_12.r",	"chaos_13",	"chaos_14.r","chaos_15.r")])) > 2 ] <- NA
+
+#Get scores of CHAOS
+#View(star[,c("record_id", "chaos_total")])
+list(star$chaos_total)
+```
+
+## CHAOS_Secondary
+```{r}
+star$chaos_1_secondary.r <- car::recode(star$chaos_1," '0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star$chaos_2_secondary.r <- car::recode(star$chaos_2," '0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star$chaos_4_secondary.r <- car::recode(star$chaos_4,"'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star$chaos_12_secondary.r <- car::recode(star$chaos_12,"'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star$chaos_14_secondary.r <- car:: recode(star$chaos_14,"'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star$chaos_15_secondary.r <- car::recode(star$chaos_15, "'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+
+#Get scores of CHAOS
+star$chaos_secondary_total <- rowSums(star[,c("chaos_1_secondary.r", "chaos_2_secondary.r","chaos_3_secondary", "chaos_4_secondary.r", "chaos_5_secondary", "chaos_6_secondary",	"chaos_7_secondary",	"chaos_8_secondary","chaos_9_secondary","chaos_10_secondary",	"chaos_11_secondary", "chaos_12_secondary.r", "chaos_13_secondary",	"chaos_14_secondary.r","chaos_15_secondary.r")], na.rm = T)
+
+#Only score participants who have completed >80% of questionnaires
+star$chaos_total[rowSums(is.na(star[,c("chaos_1_secondary.r", "chaos_2_secondary","chaos_3_secondary", "chaos_4_secondary.r", "chaos_5_secondary", "chaos_6_secondary",	"chaos_7_secondary",	"chaos_8_secondary","chaos_9_secondary","chaos_10_secondary",	"chaos_11_secondary", "chaos_12_secondary.r",	"chaos_13_secondary",	"chaos_14_secondary.r","chaos_15_secondary.r")])) > 2 ] <- NA
+
+#Get scores of CHAOS
+View(star[,c("record_id", "chaos_secondary_total")])
+list(star$chaos_secondary_total)
+```
+
+# CSBS - Communication Composite
+```{r}
+star$csbs_total_communicate <- rowSums(star[,c("csbs_dp_e_1", "csbs_dp_e_2", "csbs_dp_e_3",	"csbs_dp_e_4", "csbs_dp_e_5",	"csbs_dp_e_6", "csbs_dp_e_7", "csbs_dp_e_8", "csbs_dp_g_9",	"csbs_dp_g_10",	"csbs_dp_g_11",	"csbs_dp_g_12",	"csbs_dp_g_13")], na.rm = T)
+
+psych::alpha(star[,c("csbs_dp_e_1", "csbs_dp_e_2", "csbs_dp_e_3",	"csbs_dp_e_4", "csbs_dp_e_5",	"csbs_dp_e_6", "csbs_dp_e_7", "csbs_dp_e_8", "csbs_dp_g_9",	"csbs_dp_g_10",	"csbs_dp_g_11",	"csbs_dp_g_12",	"csbs_dp_g_13")])
+
+#Get scores of CSBS - Communication Composite
+list(star[,c("csbs_dp_e_1", "csbs_dp_e_2", "csbs_dp_e_3",	"csbs_dp_e_4", "csbs_dp_e_5",	"csbs_dp_e_6", "csbs_dp_e_7", "csbs_dp_e_8","csbs_dp_g_9",	"csbs_dp_g_10",	"csbs_dp_g_11",	"csbs_dp_g_12",	"csbs_dp_g_13")])
+#View(star[,c("record_id", "csbs_total_communicate")])
+star$csbs_total_communicate
+```
+
+## CSBS - Communication Composite_Secondary
+```{r}
+star$csbs_communicate_secondary_total <- rowSums(star[,c(	"csbs_dp_e_1_secondary",	"csbs_dp_e_2_secondary",	"csbs_dp_e_3_secondary",	"csbs_dp_e_4_secondary",	"csbs_dp_e_5_secondary",	"csbs_dp_e_6_secondary",	"csbs_dp_e_7_secondary",	"csbs_dp_e_8_secondary","csbs_dp_g_9_secondary",	"csbs_dp_g_10_secondary","csbs_dp_g_11_secondary",	"csbs_dp_g_12_secondary",	"csbs_dp_g_13_secondary")], na.rm = TRUE)
+
+#Get scores 
+list(star[,c("csbs_dp_e_1_secondary",	"csbs_dp_e_2_secondary",	"csbs_dp_e_3_secondary",	"csbs_dp_e_4_secondary",	"csbs_dp_e_5_secondary",	"csbs_dp_e_6_secondary",	"csbs_dp_e_7_secondary",	"csbs_dp_e_8_secondary","csbs_dp_g_9_secondary",	"csbs_dp_g_10_secondary","csbs_dp_g_11_secondary",	"csbs_dp_g_12_secondary",	"csbs_dp_g_13_secondary")])
+
+View(star[,c("record_id", "csbs_secondary_total")])
+```
+
+
+# CSBS - Expressive Speech Composite
+```{r}
+star$csbs_expressive_total <- rowSums (star[,c("csbs_dp_s_14", "csbs_dp_s_15", "csbs_dp_s_16",	"csbs_dp_w_17",	"csbs_dp_w_18")], na.rm =TRUE)
+psych::alpha(star[,c("csbs_dp_s_14", "csbs_dp_s_15", "csbs_dp_s_16",	"csbs_dp_w_17",	"csbs_dp_w_18")])
+#Get scores of CSBS - Expressive Speech Composite
+list(star[,c("csbs_dp_s_14", "csbs_dp_s_15", "csbs_dp_s_16",	"csbs_dp_w_17",	"csbs_dp_w_18")])
+#View(star[,c("record_id", "csbs_expressive_total")])
+star$csbs_expressive_total
+```
+
+## CSBS - Expressive Speech Composite_Secondary
+```{r}
+star$csbs_secondary_expressive_total <- rowSums(star[,c("csbs_dp_s_14_secondary", "csbs_dp_s_15_secondary",	"csbs_dp_s_16_secondary",	"csbs_dp_w_17_secondary",	"csbs_dp_w_18_secondary")], na.rm = TRUE)
+
+#Get scores
+list(star[,c("csbs_dp_s_14_secondary",	"csbs_dp_s_15_secondary",	"csbs_dp_s_16_secondary",	"csbs_dp_w_17_secondary", "csbs_dp_w_18_secondary")])
+View(star[,c("record_id", "csbs_secondary_expressive_total")])
+```
+
+# CSBS - Symbolic Composite 
+```{r}
+#remove missing values
+star$csbs_symbolic_total <- rowSums(star[, c("csbs_dp_u_19", "csbs_dp_u_20", "csbs_dp_o_21", "csbs_dp_o_22", "csbs_dp_o_23", "csbs_dp_o_24", "csbs_dp_32")], na.rm = TRUE)
+psych::alpha(star[,c("csbs_dp_u_19", "csbs_dp_u_20", "csbs_dp_o_21", "csbs_dp_o_22", "csbs_dp_o_23", "csbs_dp_o_24", "csbs_dp_32")])
+#View(star[,c("record_id", "csbs_symbolic_total")])
+star$csbs_symbolic_total
+```
+
+## CSBS - Symbolic Composite_Secondary
+```{r}
+star$csbs_secondary_total <- rowSums(star[,c("csbs_dp_u_19_secondary",	"csbs_dp_u_20_secondary",	"csbs_dp_o_21_secondary", "csbs_dp_o_22_secondary",	"csbs_dp_o_23_secondary",	"csbs_dp_o_24_secondary",	"csbs_dp_32_secondary",	"csbs_dp_33_secondary")], na.rm = TRUE)
+
+list(star[,c("csbs_dp_u_19_secondary",	"csbs_dp_u_20_secondary",	"csbs_dp_o_21_secondary",	"csbs_dp_o_22_secondary",	"csbs_dp_o_23_secondary",	"csbs_dp_o_24_secondary",	"csbs_dp_32_secondary",	"csbs_dp_33_secondary")])
+```
+
+# Under 12 mos CSV
+```{r}
+write.csv(star[,c("record_id", "cmu_pr_total", "epds_total", "bdi_total", "bdiii_total", "bai_total", "stas_total", "fam_total", "rales_total", "quic5_total", "chaos_total","pss_total", "ibqr_negaffect", "ibqr_orienting", "ibqr_surgency", "csbs_symbolic_total", "csbs_expressive_total","csbs_total_communicate")], "/Users/melaniekwan/Library/CloudStorage/GoogleDrive-smkwan@usc.edu/.shortcut-targets-by-id/1YZiuWrGpvn0s5DiJmiP6QJk1xf30pnzy/BEAD Lab/Studies/STAR/Data/Questionnaires/Under 12 mos/Questionnaires_Score.csv", row.names = FALSE, na = "")
+
+star.u12 <- star # Saving a final version for under 12 
+
+#This is for secondary
+#write.csv(star[,c("record_id", "cmu_pr_total_secondary", "bdi_total", "bdiii_total", "bai_total", "stas_total", "fam_total", "rales_total", "quic5_total", "chaos_total","pss_total", "ibqr_negaffect", "ibqr_orienting", "ibqr_surgency", "csbs_symbolic_total", "csbs_expressive_total","csbs_total_communicate")], "/Users/melaniekwan/Library/CloudStorage/GoogleDrive-smkwan@usc.edu/.shortcut-targets-by-id/1YZiuWrGpvn0s5DiJmiP6QJk1xf30pnzy/BEAD Lab/Studies/STAR/Data/Questionnaires/Under 12 mos/Questionnaires_Score.csv", row.names = FALSE, na = "")
+
+```
+
+# Over 12mos
+## Read in data
+```{r}
+path_dir <- "/Users/melaniekwan/Library/CloudStorage/GoogleDrive-smkwan@usc.edu/.shortcut-targets-by-id/1YZiuWrGpvn0s5DiJmiP6QJk1xf30pnzy/BEAD Lab/Studies/STAR/Data/Questionnaires/12+ mos" #This is for Mel
+setwd(path_dir)
+star12plus <- read.csv("/Users/melaniekwan/Library/CloudStorage/GoogleDrive-smkwan@usc.edu/.shortcut-targets-by-id/1YZiuWrGpvn0s5DiJmiP6QJk1xf30pnzy/BEAD Lab/Studies/STAR/Data/Questionnaires/12+ mos/STAR12mos_DATA_2024-03-12_1118.csv")
+```
+
+# CMU
+```{r}
+#TV Shows
+star12plus$cmu_pr_07a_hrs_min <- star12plus$cmu_pr_07a_hrs*60 # Converting into minutes
+star12plus$cmu_07a_total <- rowSums(star12plus[,c("cmu_pr_07a_hrs_min", 	"cmu_pr_07a_mins")], na.rm = T)
+star12plus$cmu_pr_07a_total <- ifelse(is.na(star12plus$cmu_pr_07a_hrs_min) & is.na(star12plus$cmu_pr_07a_mins) & star12plus$cmu_pr_07a_na___1 != "1", NA,
+                                ifelse(star12plus$cmu_pr_07a_na___1 == "1", 0,star12plus$cmu_07a_total))
+#View(star12plus[c("record_id","cmu_pr_07a_total", "cmu_pr_07a_hrs_min", 	"cmu_pr_07a_mins", "cmu_pr_07a_na___1")])
+star12plus$cmu_pr_07a_total
+
+#Video games
+star12plus$cmu_pr_07b_hrs_min <- star12plus$cmu_pr_07b_hrs*60 
+star12plus$cmu_07b_total <- rowSums(star12plus[,c("cmu_pr_07b_hrs_min", 	"cmu_pr_07b_mins")], na.rm = T)
+star12plus$cmu_pr_07b_total <- ifelse(is.na(star12plus$cmu_pr_07b_hrs_min) & is.na(star12plus$cmu_pr_07b_mins) & star12plus$cmu_pr_07b_na___1 != "1", NA,
+                                ifelse(star12plus$cmu_pr_07b_na___1 == "1", 0,star12plus$cmu_07b_total))
+#View(star12plus[c("record_id", "cmu_pr_07b_total", "cmu_pr_07b_hrs_min", "cmu_pr_07b_mins", "cmu_pr_07b_na___1")])
+star12plus$cmu_07b_total
+
+#Educational device games
+star12plus$cmu_pr_07c_hrs_min <- star12plus$cmu_pr_07c_hrs*60
+star12plus$cmu_07c_total <- rowSums(star12plus[,c("cmu_pr_07c_hrs_min", 	"cmu_pr_07c_mins")], na.rm = T)
+star12plus$cmu_pr_07c_total <- ifelse(is.na(star12plus$cmu_pr_07c_hrs_min) & is.na(star12plus$cmu_pr_07c_mins) & star12plus$cmu_pr_07c_na___1 != "1", NA,
+                                ifelse(star12plus$cmu_pr_07c_na___1 == "1", 0,star12plus$cmu_07c_total))
+#View(star12plus[c("record_id", "cmu_pr_07c_total", "cmu_pr_07c_hrs_min", "cmu_pr_07c_mins", "cmu_pr_07c_na___1")])
+star12plus$cmu_pr_07c_total
+
+#Computer games
+star12plus$cmu_pr_07d_hrs_min <-star12plus$cmu_pr_07d_hrs*60
+star12plus$cmu_07d_total <- rowSums(star12plus[,c("cmu_pr_07d_hrs", "cmu_pr_07d_mins")], na.rm = T)
+star12plus$cmu_pr_07d_total <- ifelse(is.na(star12plus$cmu_pr_07d_hrs_min) & is.na(star12plus$cmu_pr_07d_mins) & star12plus$cmu_pr_07d_na___1 != "1", NA,
+                                ifelse(star12plus$cmu_pr_07d_na___1 == "1", 0,star12plus$cmu_07d_total))
+#View(star12plus[c("record_id", "cmu_pr_07d_total", "cmu_pr_07d_hrs_min", "cmu_pr_07d_mins", "cmu_pr_07d_na___1")])
+star12plus$cmu_07d_total
+
+#Playing games on iPhone
+star12plus$cmu_pr_07e_hrs_min <- star12plus$cmu_pr_07e_hrs*60
+star12plus$cmu_07e_total <- rowSums(star12plus[,c("cmu_pr_07e_hrs", "cmu_pr_07e_mins", "cmu_pr_07e_na___1")], na.rm = T)
+star12plus$cmu_pr_07e_total <- ifelse(is.na(star12plus$cmu_pr_07e_hrs_min) & is.na(star12plus$cmu_pr_07e_mins) & star12plus$cmu_pr_07e_na___1 != "1", NA,
+                                ifelse(star12plus$cmu_pr_07e_na___1 == "1", 0,star12plus$cmu_07e_total))
+#View(star12plus[c("record_id", "cmu_pr_07e_total", "cmu_pr_07e_hrs_min", "cmu_pr_07e_mins", "cmu_pr_07e_na___1")])
+star12plus$cmu_pr_07e_total
+
+#Video chat 
+star12plus$cmu_pr_07f_hrs_min <- star12plus$cmu_pr_07f_hrs*60
+star12plus$cmu_07f_total <- rowSums(star12plus[,c("cmu_pr_07f_hrs", "cmu_pr_07f_mins")], na.rm = T)
+star12plus$cmu_pr_07f_total <- ifelse(is.na(star12plus$cmu_pr_07f_hrs_min) & is.na(star12plus$cmu_pr_07f_mins) & star12plus$cmu_pr_07f_na___1 != "1", NA,
+                                ifelse(star12plus$cmu_pr_07f_na___1 == "1", 0,star12plus$cmu_07f_total))
+#View(star12plus[c("record_id","cmu_pr_07f_total", "cmu_pr_07f_hrs_min", "cmu_pr_07f_mins", "cmu_pr_07f_na___1")])
+star12plus$cmu_pr_07f_total
+
+#Do HW on computer/tablet
+star12plus$cmu_pr_07g_hrs_min <- star12plus$cmu_pr_07g_hrs*60
+star12plus$cmu_07g_total <- rowSums(star12plus[,c("cmu_pr_07g_hrs", "cmu_pr_07g_mins")], na.rm = T)
+star12plus$cmu_pr_07g_total <- ifelse(is.na(star12plus$cmu_pr_07g_hrs_min) & is.na(star12plus$cmu_pr_07g_mins) & star12plus$cmu_pr_07g_na___1 != "1", NA,
+                                ifelse(star12plus$cmu_pr_07g_na___1 == "1", 0,star12plus$cmu_07g_total))
+#View(star12plus[c("record_id","cmu_pr_07g_total", "cmu_pr_07g_hrs_min", "cmu_pr_07g_mins", "cmu_pr_07g_na___1")])
+star12plus$cmu_pr_07g_total
+
+#Browse website
+star12plus$cmu_pr_07h_hrs_min <- star12plus$cmu_pr_07h_hrs*60
+star12plus$cmu_07h_total <- rowSums(star12plus[,c("cmu_pr_07h_hrs", "cmu_pr_07h_mins")], na.rm = T)
+star12plus$cmu_pr_07h_total <- ifelse(is.na(star12plus$cmu_pr_07h_hrs_min) & is.na(star12plus$cmu_pr_07h_mins) & star12plus$cmu_pr_07h_na___1 != "1", NA,
+                                ifelse(star12plus$cmu_pr_07h_na___1 == "1", 0,star12plus$cmu_07h_total))
+#View(star12plus[c("record_id", "cmu_pr_07h_total", "cmu_pr_07h_hrs_min", "cmu_pr_07f_mins", "cmu_pr_07h_na___1")])
+star12plus$cmu_pr_07h_total
+
+#Computer
+star12plus$cmu_pr_07i_hrs_min <- star12plus$cmu_pr_07i_hrs*60
+star12plus$cmu_07i_total <- rowSums(star12plus[,c("cmu_pr_07i_hrs", "cmu_pr_07i_mins")], na.rm = T)
+star12plus$cmu_pr_07i_total <- ifelse(is.na(star12plus$cmu_pr_07i_hrs_min) & is.na(star12plus$cmu_pr_07i_mins) & star12plus$cmu_pr_07i_na___1 != "1", NA,
+                                ifelse(star12plus$cmu_pr_07i_na___1 == "1", 0,star12plus$cmu_07i_total))
+#View(star12plus[c("record_id", "cmu_pr_07i_total", "cmu_pr_07i_hrs_min", "cmu_pr_07i_mins", "cmu_pr_07i_na___1")])
+star12plus$cmu_pr_07i_total
+
+
+#Phone
+star12plus$cmu_pr_07j_hrs_min <- star12plus$cmu_pr_07j_hrs*60
+star12plus$cmu_07j_total <- rowSums(star12plus[,c("cmu_pr_07j_hrs", "cmu_pr_07j_mins")], na.rm = T)
+star12plus$cmu_pr_07j_total <- ifelse(is.na(star12plus$cmu_pr_07j_hrs_min) & is.na(star12plus$cmu_pr_07j_mins) & star12plus$cmu_pr_07j_na___1 != "1", NA,
+                                ifelse(star12plus$cmu_pr_07j_na___1 == "1", 0,star12plus$cmu_07j_total))
+#View(star12plus[c("record_id", "cmu_pr_07j_total", "cmu_pr_07j_hrs_min", "cmu_pr_07j_mins", "cmu_pr_07j_na___1")])
+star12plus$cmu_pr_07j_total
+
+
+star12plus$cmu_pr_total <- rowSums(star12plus[,c("cmu_pr_07a_total", "cmu_pr_07b_total", "cmu_pr_07c_total", "cmu_pr_07d_total", "cmu_pr_07e_total", "cmu_pr_07f_total", "cmu_pr_07g_total", "cmu_pr_07h_total", "cmu_pr_07i_total", "cmu_pr_07j_total")], na.rm = T)
+
+#Only score participants who have completed >80% questionnaires
+star12plus$cmu_pr_total[rowSums(is.na(star12plus[,c("cmu_pr_07a_total", "cmu_pr_07b_total", "cmu_pr_07c_total", "cmu_pr_07d_total", "cmu_pr_07e_total", "cmu_pr_07f_total", "cmu_pr_07g_total", "cmu_pr_07h_total", "cmu_pr_07i_total", "cmu_pr_07j_total")])) > 2 ] <- NA
+
+
+#Total infant screentime 
+star12plus$cmu_pr_total
+```
+
+## CMU_Secondary (Infant Screentime Secondary)
+```{r}
+# Converting into minutes
+star12plus$cmu_pr_07a_total_secondary <- with(star12plus, ifelse(
+  is.na(cmu_pr_07a_hrs_secondary) & is.na(cmu_pr_07a_mins_secondary) & cmu_pr_07a_na_secondary___1 != "1", 
+  NA,
+  ifelse(cmu_pr_07a_na_secondary___1 == "1", 0, cmu_pr_07a_hrs_secondary * 60 + cmu_pr_07a_mins_secondary)
+))
+
+View(star12plus[c("record_id", "cmu_pr_07a_total_secondary", "cmu_pr_07a_hrs_min_secondary", "cmu_pr_07a_mins_secondary", "cmu_pr_07a_na_secondary___1")])
+
+star12plus$cmu_pr_07b_hrs_mins_secondary <- star12plus$cmu_pr_07b_hrs_secondary*60 
+star12plus$cmu_07b_total_secondary <- rowSums(star12plus[,c("cmu_pr_07b_hrs_mins_secondary", 	"cmu_pr_07b_mins_secondary")], na.rm = T)
+star12plus$cmu_pr_07b_total_secondary <- ifelse(is.na(star12plus$cmu_pr_07b_hrs_mins_secondary) & is.na(star12plus$cmu_pr_07b_mins_secondary) & star12plus$cmu_pr_07b_na_secondary___1 != "1", NA,
+                                ifelse(star12plus$cmu_pr_07b_na___1 == "1", 0,star12plus$cmu_07b_total))
+View(star12plus[c("record_id", "cmu_pr_07b_total_secondary", "cmu_pr_07b_hrs_mins_secondary", "cmu_pr_07b_mins_secondary", "cmu_pr_07b_na_secondary___1")])
+
+star12plus$cmu_pr_07c_hrs_min_secondary <- star12plus$cmu_pr_07c_hrs_secondary*60
+star12plus$cmu_07c_total_secondary <- rowSums(star12plus[,c("cmu_pr_07c_hrs_secondary", 	"cmu_pr_07c_mins_secondary")], na.rm = T)
+star12plus$cmu_pr_07c_total_secondary <- ifelse(is.na(star12plus$cmu_pr_07c_hrs_min_secondary) & is.na(star12plus$cmu_pr_07c_mins_secondary) & star12plus$cmu_pr_07c_na_secondary___1 != "1", NA,
+                                ifelse(star12plus$cmu_pr_07c_na_secondary___1 == "1", 0,star12plus$cmu_07c_total_secondary))
+View(star12plus[c("record_id", "cmu_pr_07c_total_secondary", "cmu_pr_07c_hrs_min_secondary", "cmu_pr_07c_mins_secondary", "cmu_pr_07c_na_secondary___1")])
+
+star12plus$cmu_pr_07d_hrs_min_secondary <-star12plus$cmu_pr_07d_hrs_secondary*60
+star12plus$cmu_07d_total_secondary <- rowSums(star12plus[,c("cmu_pr_07d_hrs_secondary", "cmu_pr_07d_mins_secondary")], na.rm = T)
+star12plus$cmu_pr_07d_total_secondary <- ifelse(is.na(star12plus$cmu_pr_07d_hrs_min_secondary) & is.na(star12plus$cmu_pr_07d_mins_secondary) & star12plus$cmu_pr_07d_na_secondary___1 != "1", NA,
+                                ifelse(star12plus$cmu_pr_07d_na_secondary___1 == "1", 0,star12plus$cmu_07d_total_secondary))
+View(star12plus[c("record_id", "cmu_pr_07d_total_secondary", "cmu_pr_07d_hrs_min_secondary", "cmu_pr_07d_mins", "cmu_pr_07d_na_secondary___1")])
+
+star12plus$cmu_pr_07e_hrs_min_secondary <- star12plus$cmu_pr_07e_hrs_secondary*60
+star12plus$cmu_07e_total_secondary <- rowSums(star12plus[,c("cmu_pr_07e_hrs_secondary", "cmu_pr_07e_mins_secondary", "cmu_pr_07e_na_secondary___1")], na.rm = T)
+star12plus$cmu_pr_07e_total_secondary <- ifelse(is.na(star12plus$cmu_pr_07e_hrs_min_secondary) & is.na(star12plus$cmu_pr_07e_mins_secondary) & star12plus$cmu_pr_07e_na_secondary___1 != "1", NA,
+                                ifelse(star12plus$cmu_pr_07e_na___1 == "1", 0,star12plus$cmu_07e_total_secondary))
+View(star12plus[c("record_id", "cmu_07e_total_secondary", "cmu_pr_07e_hrs_min_secondary", "cmu_pr_07e_mins_secondary", "cmu_pr_07e_na_secondary___1")])
+
+star12plus$cmu_pr_07f_hrs_min_secondary <- star12plus$cmu_pr_07f_hrs_secondary*60
+star12plus$cmu_07f_total_secondary <- rowSums(star12plus[,c("cmu_pr_07f_hrs_secondary", "cmu_pr_07f_mins_secondary")], na.rm = T)
+star12plus$cmu_pr_07f_total_secondary <- ifelse(is.na(star12plus$cmu_pr_07f_hrs_min_secondary) & is.na(star12plus$cmu_pr_07f_mins_secondary) & star12plus$cmu_pr_07f_na_secondary___1 != "1", NA,
+                                ifelse(star12plus$cmu_pr_07f_na_secondary___1 == "1", 0,star12plus$cmu_07f_total_secondary))
+View(star12plus[c("record_id","cmu_07f_total_secondary", "cmu_pr_07f_hrs_min_secondary", "cmu_pr_07f_mins_secondary", "cmu_pr_07f_na_secondary___1")])
+
+star12plus$cmu_pr_07g_hrs_min_secondary <- star12plus$cmu_pr_07g_hrs_secondary*60
+star12plus$cmu_07g_total_secondary <- rowSums(star12plus[,c("cmu_pr_07g_hrs_secondary", "cmu_pr_07g_mins_secondary")], na.rm = T)
+star12plus$cmu_pr_07g_total_secondary <- ifelse(is.na(star12plus$cmu_pr_07g_hrs_min_secondary) & is.na(star12plus$cmu_pr_07g_mins_secondary) & star12plus$cmu_pr_07g_na_secondary___1 != "1", NA,
+                                ifelse(star12plus$cmu_pr_07g_na_secondary___1 == "1", 0,star12plus$cmu_07g_total_secondary))
+View(star12plus[c("record_id","cmu_07g_total_secondary", "cmu_pr_07g_hrs_min_secondary", "cmu_pr_07g_mins_secondary", "cmu_pr_07g_na_secondary___1")])
+
+star12plus$cmu_pr_07h_hrs_min_secondary <- star12plus$cmu_pr_07h_hrs_secondary*60
+star12plus$cmu_07h_total_secondary <- rowSums(star12plus[,c("cmu_pr_07h_hrs_secondary", "cmu_pr_07h_mins_secondary")], na.rm = T)
+star12plus$cmu_pr_07h_total_secondary <- ifelse(is.na(star12plus$cmu_pr_07h_hrs_min_secondary) & is.na(star12plus$cmu_pr_07h_mins_secondary) & star12plus$cmu_pr_07h_na_secondary___1 != "1", NA,
+                                ifelse(star12plus$cmu_pr_07h_na_secondary___1 == "1", 0,star12plus$cmu_07h_total_secondary))
+View(star12plus[c("record_id", "cmu_07h_total_secondary", "cmu_pr_07h_hrs_min_secondary", "cmu_pr_07h_mins_secondary", "cmu_pr_07h_na_secondary___1")])
+
+star12plus$cmu_pr_07i_hrs_min_secondary <- star12plus$cmu_pr_07i_hrs_secondary*60
+star12plus$cmu_07i_total_secondary <- rowSums(star12plus[,c("cmu_pr_07i_hrs_secondary", "cmu_pr_07i_mins_secondary")], na.rm = T)
+star12plus$cmu_pr_07i_total_secondary <- ifelse(is.na(star12plus$cmu_pr_07i_hrs_min_secondary) & is.na(star12plus$cmu_pr_07i_mins_secondary) & star12plus$cmu_pr_07i_na_secondary___1 != "1", NA,
+                                ifelse(star12plus$cmu_pr_07i_na_secondary___1 == "1", 0,star12plus$cmu_07i_total_secondary))
+View(star12plus[c("record_id", "cmu_07i_total_secondary", "cmu_pr_07i_hrs_min_secondary", "cmu_pr_07i_mins_secondary", "cmu_pr_07i_na_secondary___1")])
+
+star12plus$cmu_pr_07j_hrs_min_secondary <- star12plus$cmu_pr_07j_hrs_secondary*60
+star12plus$cmu_07j_total_secondary <- rowSums(star12plus[,c("cmu_pr_07j_hrs_secondary", "cmu_pr_07j_mins_secondary")], na.rm = T)
+star12plus$cmu_pr_07j_total_secondary <- ifelse(is.na(star12plus$cmu_pr_07j_hrs_min_secondary) & is.na(star12plus$cmu_pr_07j_mins_secondary) & star12plus$cmu_pr_07j_na_secondary___1 != "1", NA,
+                                ifelse(star12plus$cmu_pr_07j_na_secondary___1 == "1", 0,star12plus$cmu_07j_total_secondary))
+View(star12plus[,c("record_id", "cmu_pr_07j_total_secondary", "cmu_pr_07j_hrs_min_secondary", "cmu_pr_07j_mins_secondary", "cmu_pr_07j_na___1")])
+
+star12plus$cmu_pr_total <- rowSums(star12plus[,c("cmu_pr_07a_total_secondary", "cmu_pr_07b_total_secondary", "cmu_pr_07c_total_secondary", "cmu_pr_07d_total_secondary", "cmu_pr_07e_total_secondary", "cmu_pr_07f_total_secondary", "cmu_pr_07g_total_secondary", "cmu_pr_07h_total_secondary", "cmu_pr_07i_total_secondary", "cmu_pr_07j_total_secondary")], na.rm = T)
+
+#Only score participants who have completed >80% questionnaires
+star12plus$cmu_pr_total_secondary[rowSums(is.na(star12plus[,c("cmu_pr_07a_total_secondary", "cmu_pr_07b_total_secondary", "cmu_pr_07c_total_secondary", "cmu_pr_07d_total_secondary", "cmu_pr_07e_total_secondary", "cmu_pr_07f_total_secondary", "cmu_pr_07g_total_secondary", "cmu_pr_07h_total_secondary", "cmu_pr_07i_total_secondary", "cmu_pr_07j_total_secondary")])) > 2 ] <- NA
+
+#Total infant screentime 
+star12plus$cmu_pr_total_secondary
+```
+
+
+# EPDS 
+```{r}
+star12plus$epds_5.r <- car::recode(star12plus$epds_5, " '0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star12plus$epds_6.r <- car::recode(star12plus$epds_6, " '0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star12plus$epds_7.r <- car::recode(star12plus$epds_7, " '0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star12plus$epds_8.r <- car::recode(star12plus$epds_8,  " '0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star12plus$epds_9.r <- car::recode(star12plus$epds_9, " '0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star12plus$epds_10.r <- car::recode(star12plus$epds_10,  "'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star12plus$epds_11.r <- car::recode(star12plus$epds_11,  "'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+
+star12plus$epds_total <- rowSums(star12plus[,c("epds_3", "epds_4", "epds_5.r", "epds_6.r", "epds_7.r", "epds_8.r", "epds_9.r", "epds_10.r", "epds_11.r")], na.rm = T)
+
+star12plus$epds_total <- rowSums(star12plus[,c("epds_3", "epds_4", "epds_5.r", "epds_6.r", "epds_7.r", "epds_8.r", "epds_9.r", "epds_10.r", "epds_11.r")], na.rm = T)
+
+psych::alpha(star12plus[, c("epds_3", "epds_4", "epds_5.r", "epds_6.r", "epds_7.r", "epds_8.r", "epds_9.r", "epds_10.r", "epds_11.r")])
+
+#Only score participants who have completed more than 80%
+star12plus$epds_total[rowSums(is.na(star12plus[,c("epds_3", "epds_4", "epds_5.r", "epds_6.r", "epds_7.r", "epds_8.r", "epds_9.r", "epds_10.r", "epds_11.r")])) > 2 ] <- NA
+
+# Calculate EPDS total score
+star12plus$epds_total <- rowSums(star12plus[,c("epds_3", "epds_4", "epds_5.r", "epds_6.r", "epds_7.r", "epds_8.r", "epds_9.r", "epds_10.r", "epds_11.r")], na.rm = TRUE)
+star12plus$epds_total
+
+```
+
+# BDI-1
+```{r}
+#star12plus$bdi_total <- rowSums(star12plus[,c("bdi_1",	"bdi_2",	"bdi_3",	"bdi_4",	"bdi_5",	"bdi_6",	"bdi_7",	"bdi_8",	"bdi_9",	"bdi_10",	"bdi_11",	"bdi_12",	"bdi_13",	"bdi_14",	"bdi_15",	"bdi_16",	"bdi_17",	"bdi_18",	"bdi_19",	"bdi_20")], na.rm = T)
+
+#psych::alpha(star12plus[,c("bdi_1",	"bdi_2",	"bdi_3",	"bdi_4",	"bdi_5",	"bdi_6",	"bdi_7",	"bdi_8",	"bdi_9",	"bdi_10",	"bdi_11",	"bdi_12",	"bdi_13",	"bdi_14",	"bdi_15",	"bdi_16",	"bdi_17",	"bdi_18",	"bdi_19",	"bdi_20")])
+
+#star12plus$bdi_total[rowSums(is.na(star12plus[,c("bdi_1",	"bdi_2",	"bdi_3",	"bdi_4",	"bdi_5",	"bdi_6",	"bdi_7",	"bdi_8",	"bdi_9",	"bdi_10",	"bdi_11",	"bdi_12",	"bdi_13",	"bdi_14",	"bdi_15",	"bdi_16",	"bdi_17",	"bdi_18",	"bdi_19",	"bdi_20")])) > 2 ] <- NA
+
+#Get scores of BDI 
+#View(star12plus[c("record_id", "bdi_total")])
+#list(star12plus$bdi_total)
+```
+
+## BDI-1 Secondary 
+```{r}
+star12plus$bdi_secondary_total <- rowSums(star12plus[,c("bdi_1_secondary",	"bdi_2_secondary",	"bdi_3_secondary",	"bdi_4_secondary",	"bdi_5_secondary",	"bdi_6_secondary",	"bdi_7_secondary",	"bdi_8_secondary",	"bdi_9_secondary",	"bdi_10_secondary",	"bdi_11_secondary",	"bdi_12_secondary",	"bdi_13_secondary",	"bdi_14_secondary", "bdi_15_secondary",	"bdi_16_secondary", "bdi_17_secondary",	"bdi_18_secondary","bdi_19_secondary", "bdi_20_secondary")], na.rm = T)
+
+psych::alpha(star12plus[,c("bdi_1_secondary",	"bdi_2_secondary",	"bdi_3_secondary",	"bdi_4_secondary",	"bdi_5_secondary",	"bdi_6_secondary",	"bdi_7_secondary",	"bdi_8_secondary",	"bdi_9_secondary",	"bdi_10_secondary",	"bdi_11_secondary",	"bdi_12_secondary",	"bdi_13_secondary",	"bdi_14_secondary", "bdi_15_secondary",	"bdi_16_secondary", "bdi_17_secondary",	"bdi_18_secondary","bdi_19_secondary", "bdi_20_secondary")])
+
+#Only score participants who have completed >80% of questionnaires 
+star12plus$bdi_secondary_total [rowSums(is.na(star12plus[,c("bdi_1_secondary",	"bdi_2_secondary",	"bdi_3_secondary",	"bdi_4_secondary",	"bdi_5_secondary",	"bdi_6_secondary",	"bdi_7_secondary",	"bdi_8_secondary",	"bdi_9_secondary",	"bdi_10_secondary",	"bdi_11_secondary",	"bdi_12_secondary",	"bdi_13_secondary",	"bdi_14_secondary", "bdi_15_secondary",	"bdi_16_secondary", "bdi_17_secondary",	"bdi_18_secondary","bdi_19_secondary", "bdi_20_secondary")])) > 2] <- NA
+                          
+#Get Scores of BDI_Secondary  
+View(star12plus[c("record_id", "bdi_secondary_total")])
+list(star12plus$bdi_secondary_total)
+```
+
+
+# BDI-2 
+```{r}
+star12plus$bdiii_total <- rowSums(star12plus[,c("bdiii_1",	"bdiii_2",	"bdiii_3",	"bdiii_4",	"bdiii_5",	"bdiii_6",	"bdiii_7",	"bdiii_8",	"bdiii_9",	"bdiii_10",	"bdiii_11",	"bdiii_12",	"bdiii_13",	"bdiii_14",	"bdiii_15",	"bdiii_16",	"bdiii_17",	"bdiii_18",	"bdiii_19",	"bdiii_20",	"bdiii_21")])
+
+psych::alpha(star12plus[,c("bdiii_1",	"bdiii_2",	"bdiii_3",	"bdiii_4",	"bdiii_5",	"bdiii_6",	"bdiii_7",	"bdiii_8",	"bdiii_9",	"bdiii_10",	"bdiii_11",	"bdiii_12",	"bdiii_13",	"bdiii_14",	"bdiii_15",	"bdiii_16",	"bdiii_17",	"bdiii_18",	"bdiii_19",	"bdiii_20",	"bdiii_21")])
+
+#Only score people who completed 80% or more 
+star12plus$bdiii_total [rowSums(is.na(star12plus[,c("bdiii_1",	"bdiii_2",	"bdiii_3",	"bdiii_4",	"bdiii_5",	"bdiii_6",	"bdiii_7",	"bdiii_8",	"bdiii_9",	"bdiii_10",	"bdiii_11",	"bdiii_12",	"bdiii_13",	"bdiii_14",	"bdiii_15",	"bdiii_16",	"bdiii_17",	"bdiii_18",	"bdiii_19",	"bdiii_20",	"bdiii_21")])) > 2] <- NA
+
+#Get scores
+#View(star12plus[c("record_id", "bdiii_total")])
+star12plus$bdiii_total
+```
+
+## BDI-2 Secondary
+```{r}
+star12plus$bdiii_secondary_total <- rowSums(star12plus[,c("bdiii_1_secondary",	"bdiii_2_secondary",	"bdiii_3_secondary",	"bdiii_4_secondary",	"bdiii_5_secondary",	"bdiii_6_secondary",	"bdiii_7_secondary",	"bdiii_8_secondary",	"bdiii_9_secondary",	"bdiii_10_secondary",	"bdiii_11_secondary",	"bdiii_12_secondary",	"bdiii_13_secondary",	"bdiii_14_secondary",	"bdiii_15_secondary",	"bdiii_16_secondary",	"bdiii_17_secondary",	"bdiii_18_secondary",	"bdiii_19_secondary",	"bdiii_20_secondary",	"bdiii_21_secondary")])
+
+psych::alpha(star12plus[,c("bdiii_1_secondary",	"bdiii_2_secondary",	"bdiii_3_secondary",	"bdiii_4_secondary",	"bdiii_5_secondary",	"bdiii_6_secondary",	"bdiii_7_secondary",	"bdiii_8_secondary",	"bdiii_9_secondary",	"bdiii_10_secondary",	"bdiii_11_secondary",	"bdiii_12_secondary",	"bdiii_13_secondary",	"bdiii_14_secondary",	"bdiii_15_secondary",	"bdiii_16_secondary",	"bdiii_17_secondary",	"bdiii_18_secondary",	"bdiii_19_secondary",	"bdiii_20_secondary",	"bdiii_21_secondary")])
+
+star12plus$bdiii_secondary_total [rowSums(is.na(star12plus[,c("bdiii_1_secondary",	"bdiii_2_secondary",	"bdiii_3_secondary",	"bdiii_4_secondary",	"bdiii_5_secondary",	"bdiii_6_secondary",	"bdiii_7_secondary",	"bdiii_8_secondary",	"bdiii_9_secondary",	"bdiii_10_secondary",	"bdiii_11_secondary",	"bdiii_12_secondary",	"bdiii_13_secondary",	"bdiii_14_secondary",	"bdiii_15_secondary",	"bdiii_16_secondary",	"bdiii_17_secondary",	"bdiii_18_secondary",	"bdiii_19_secondary",	"bdiii_20_secondary",	"bdiii_21_secondary")])) > 2] <- NA
+
+#Get score
+(star12plus$bdiii_secondary_total)
+```
+
+# BAI
+```{r}
+star12plus$bai_total <- rowSums(star12plus[,c("bai_1_15", "bai_2_15", "bai_3_15", "bai_4_15",	"bai_5_15",	"bai_6_15",	"bai_7_15",	"bai_8_15",	"bai_9_15", "bai_10_15",	"bai_11_15",	"bai_12_15",	"bai_13_15",	"bai_14_15",	"bai_15_15",	"bai_16_15",	"bai_17_15",	"bai_18_15",	"bai_19_15",	"bai_20_15",	"bai_21_15")], na.rm = T)
+
+psych::alpha(star12plus[,c("bai_1_15", "bai_2_15", "bai_3_15", "bai_4_15",	"bai_5_15",	"bai_6_15",	"bai_7_15",	"bai_8_15",	"bai_9_15", "bai_10_15",	"bai_11_15",	"bai_12_15",	"bai_13_15",	"bai_14_15",	"bai_15_15",	"bai_16_15",	"bai_17_15",	"bai_18_15",	"bai_19_15",	"bai_20_15",	"bai_21_15")])
+
+star12plus$bdiii_total [rowSums(is.na(star12plus[,c("bai_1_15", "bai_2_15", "bai_3_15", "bai_4_15",	"bai_5_15",	"bai_6_15",	"bai_7_15",	"bai_8_15",	"bai_9_15", "bai_10_15",	"bai_11_15",	"bai_12_15",	"bai_13_15",	"bai_14_15",	"bai_15_15",	"bai_16_15",	"bai_17_15",	"bai_18_15",	"bai_19_15",	"bai_20_15",	"bai_21_15")])) > 2] <- NA
+
+#Get Scores of BAI
+#View(star12plus[c("record_id", "bai_total")])
+star12plus$bai_total
+```
+
+
+## BAI_Secondary
+```{r}
+star12plus$bai_secondary_total <- rowSums(star12plus[,c("bai_1_15_secondary",	"bai_2_15_secondary",	"bai_3_15_secondary",	"bai_4_15_secondary", "bai_5_15_secondary",	"bai_6_15_secondary",	"bai_7_15_secondary",	"bai_8_15_secondary",	"bai_9_15_secondary","bai_10_15_secondary",	"bai_11_15_secondary", "bai_12_15_secondary",	"bai_13_15_secondary",	"bai_14_15_secondary",	"bai_15_15_secondary",	"bai_16_15_secondary", "bai_17_15_secondary", "bai_18_15_secondary",	"bai_19_15_secondary",	"bai_20_15_secondary",	"bai_21_15_secondary")], na.rm = T)
+
+psych::alpha(star12plus[,c("bai_1_15_secondary",	"bai_2_15_secondary",	"bai_3_15_secondary",	"bai_4_15_secondary", "bai_5_15_secondary",	"bai_6_15_secondary",	"bai_7_15_secondary",	"bai_8_15_secondary",	"bai_9_15_secondary","bai_10_15_secondary",	"bai_11_15_secondary", "bai_12_15_secondary",	"bai_13_15_secondary",	"bai_14_15_secondary",	"bai_15_15_secondary",	"bai_16_15_secondary", "bai_17_15_secondary", "bai_18_15_secondary",	"bai_19_15_secondary",	"bai_20_15_secondary",	"bai_21_15_secondary")])
+
+#Only score participants who have completed >80%
+star12plus$bai_secondary_total [rowSums(is.na(star12plus[,c("bai_1_15_secondary",	"bai_2_15_secondary",	"bai_3_15_secondary",	"bai_4_15_secondary", "bai_5_15_secondary",	"bai_6_15_secondary",	"bai_7_15_secondary",	"bai_8_15_secondary",	"bai_9_15_secondary","bai_10_15_secondary",	"bai_11_15_secondary", "bai_12_15_secondary",	"bai_13_15_secondary",	"bai_14_15_secondary",	"bai_15_15_secondary",	"bai_16_15_secondary", "bai_17_15_secondary", "bai_18_15_secondary",	"bai_19_15_secondary",	"bai_20_15_secondary",	"bai_21_15_secondary")])) > 2 ] <- NA
+
+#Get Scores of BAI_Secondary
+View(star12plus[c("record_id", "bai_secondary_total")])
+list(star12plus$bai_secondary_total)
+```
+
+# ECBQ
+```{r}
+lapply(star12plus[names(star12plus)[grep("ecbq", names(star12plus))]], table)
+# Looks like some of variables have an 8, which is for Not Applicable
+# As such, we need to make sure that is just counted as missing
+vars <- names(star12plus)[grep("ecbq", names(star))]
+star12plus[vars] <- sapply(star12plus[vars], function(x) ifelse(x=="8", NA,x))
+#star12plus[star12plus=="8"] <- NA
+
+
+#Recoding all variables that need to be recoded
+star12plus$ecbq_27.r <- car::recode(star12plus$ecbq_27, "'7'='1'; '6'='2';'5'='3';'4'='4';'3'='5';'2'='6';'1'='7';else=NA")
+star12plus$ecbq_62.r <- car::recode(star12plus$ecbq_62, "'7'='1'; '6'='2';'5'='3';'4'='4';'3'='5';'2'='6';'1'='7';else=NA")
+star12plus$ecbq_78.r <- car::recode(star12plus$ecbq_78, "'7'='1'; '6'='2';'5'='3';'4'='4';'3'='5';'2'='6';'1'='7';else=NA")
+star12plus$ecbq_95.r <- car::recode(star12plus$ecbq_95, "'7'='1'; '6'='2';'5'='3';'4'='4';'3'='5';'2'='6';'1'='7';else=NA")
+star12plus$ecbq_41.r <- car::recode(star12plus$ecbq_41, "'7'='1'; '6'='2';'5'='3';'4'='4';'3'='5';'2'='6';'1'='7';else=NA")
+star12plus$ecbq_13.r <- car::recode(star12plus$ecbq_13, "'7'='1'; '6'='2';'5'='3';'4'='4';'3'='5';'2'='6';'1'='7';else=NA")
+star12plus$ecbq_51.r <- car::recode(star12plus$ecbq_51, "'7'='1'; '6'='2';'5'='3';'4'='4';'3'='5';'2'='6';'1'='7';else=NA")
+star12plus$ecbq_17.r <- car::recode(star12plus$ecbq_17, "'7'='1'; '6'='2';'5'='3';'4'='4';'3'='5';'2'='6';'1'='7';else=NA")
+star12plus$ecbq_52.r <- car::recode(star12plus$ecbq_52, "'7'='1'; '6'='2';'5'='3';'4'='4';'3'='5';'2'='6';'1'='7';else=NA")
+star12plus$ecbq_19.r <- car::recode(star12plus$ecbq_19, "'7'='1'; '6'='2';'5'='3';'4'='4';'3'='5';'2'='6';'1'='7';else=NA")
+star12plus$ecbq_88.r <- car::recode(star12plus$ecbq_88, "'7'='1'; '6'='2';'5'='3';'4'='4';'3'='5';'2'='6';'1'='7';else=NA")
+star12plus$ecbq_82.r <- car::recode(star12plus$ecbq_82, "'7'='1'; '6'='2';'5'='3';'4'='4';'3'='5';'2'='6';'1'='7';else=NA")
+star12plus$ecbq_66.r <- car::recode(star12plus$ecbq_66, "'7'='1'; '6'='2';'5'='3';'4'='4';'3'='5';'2'='6';'1'='7';else=NA")
+star12plus$ecbq_102.r <- car::recode(star12plus$ecbq_102, "'7'='1'; '6'='2';'5'='3';'4'='4';'3'='5';'2'='6';'1'='7';else=NA")
+
+#Activity Level
+star12plus$ecbq_activity <- rowSums(star12plus[,c("ecbq_27.r","ecbq_33", "ecbq_73", "ecbq_12", "ecbq_61", "ecbq_62.r", "ecbq_75", "ecbq_76")], na.rm = T)
+star12plus$ecbq_activity [rowSums(is.na(star12plus[,c("ecbq_27.r","ecbq_33", "ecbq_73", "ecbq_12", "ecbq_61", "ecbq_62.r", "ecbq_75", "ecbq_76")])) > 2 ] <- NA
+psych::alpha(star12plus[,c("ecbq_27.r","ecbq_33", "ecbq_73", "ecbq_12", "ecbq_61", "ecbq_62.r", "ecbq_75", "ecbq_76")])
+star12plus$ecbq_activity
+
+#Attentional Shifting
+star12plus$attn <- rowSums(star12plus[,c("ecbq_10","ecbq_30", "ecbq_40", "ecbq_41.r", "ecbq_36", "ecbq_68", "ecbq_100", "ecbq_104")], na.rm = T)
+star12plus$attn [rowSums(is.na(star12plus[,c("ecbq_10","ecbq_30", "ecbq_40", "ecbq_41.r", "ecbq_36", "ecbq_68", "ecbq_100", "ecbq_104")])) > 2 ] <- NA
+psych::alpha(star12plus[,c("ecbq_10","ecbq_30", "ecbq_40", "ecbq_41.r", "ecbq_36", "ecbq_68", "ecbq_100", "ecbq_104")])
+star12plus$attn
+
+#Cuddliness
+star12plus$cuddle <- rowSums(star12plus[,c("ecbq_13.r","ecbq_14", "ecbq_51.r", "ecbq_24", "ecbq_92", "ecbq_93")], na.rm = T)
+star12plus$cuddle [rowSums(is.na(star12plus[,c("ecbq_13.r","ecbq_14", "ecbq_51.r", "ecbq_24", "ecbq_92", "ecbq_93")])) > 2 ] <- NA
+psych::alpha(star12plus[,c("ecbq_13.r","ecbq_14", "ecbq_51.r", "ecbq_24", "ecbq_92", "ecbq_93")])
+star12plus$cuddle
+
+#Discomfort
+star12plus$discomfort <- rowSums(star12plus[,c("ecbq_5","ecbq_6", "ecbq_37", "ecbq_39", "ecbq_69", "ecbq_70", "ecbq_74")], na.rm = T)
+star12plus$discomfort [rowSums(is.na(star12plus[,c("ecbq_5","ecbq_6", "ecbq_37", "ecbq_39", "ecbq_69", "ecbq_70", "ecbq_74")])) > 2 ] <- NA
+psych::alpha(star12plus[,c("ecbq_5","ecbq_6", "ecbq_37", "ecbq_39", "ecbq_69", "ecbq_70", "ecbq_74")])
+star12plus$discomfort
+
+#Fear
+star12plus$fear <- rowSums(star12plus[,c("ecbq_38","ecbq_25", "ecbq_26", "ecbq_57", "ecbq_58", "ecbq_59", "ecbq_60", "ecbq_99")], na.rm = T)
+star12plus$fear [rowSums(is.na(star12plus[,c("ecbq_38","ecbq_25", "ecbq_26", "ecbq_57", "ecbq_58", "ecbq_59", "ecbq_60", "ecbq_99")])) > 2 ] <- NA
+psych::alpha(star12plus[,c("ecbq_38","ecbq_25", "ecbq_26", "ecbq_57", "ecbq_58", "ecbq_59", "ecbq_60", "ecbq_99")])
+star12plus$fear
+
+#Frustration
+star12plus$frustration <- rowSums(star12plus[,c("ecbq_1", "ecbq_15", "ecbq_83", "ecbq_84", "ecbq_85", "ecbq_101")], na.rm = T)
+star12plus$frustration [rowSums(is.na(star12plus[,c("ecbq_1", "ecbq_15", "ecbq_83", "ecbq_84", "ecbq_85", "ecbq_101")])) > 2 ] <- NA
+psych::alpha(star12plus[,c("ecbq_1", "ecbq_15", "ecbq_83", "ecbq_84", "ecbq_85", "ecbq_101")])
+star12plus$frustration
+
+#High intensity pleasure
+star12plus$high_pleasure <- rowSums(star12plus[,c("ecbq_11", "ecbq_105", "ecbq_47", "ecbq_48", "ecbq_49", "ecbq_77")], na.rm = T)
+star12plus$high_pleasure [rowSums(is.na(star12plus[,c("ecbq_11", "ecbq_105", "ecbq_47", "ecbq_48", "ecbq_49", "ecbq_77")])) > 2 ] <- NA
+psych::alpha(star12plus[,c("ecbq_11", "ecbq_105", "ecbq_47", "ecbq_48", "ecbq_49", "ecbq_77")])
+star12plus$high_pleasure
+
+#Impulsivity
+star12plus$impulse <- rowSums(star12plus[,c("ecbq_17.r", "ecbq_18", "ecbq_52.r", "ecbq_53")], na.rm = T)
+star12plus$impulse [rowSums(is.na(star12plus[,c("ecbq_17.r", "ecbq_18", "ecbq_52.r", "ecbq_53")])) > 2 ] <- NA
+psych::alpha(star12plus[,c("ecbq_17.r", "ecbq_18", "ecbq_52.r", "ecbq_53")])
+star12plus$impulse
+
+#Inhibitory Control
+star12plus$control <- rowSums(star12plus[,c("ecbq_19.r", "ecbq_63", "ecbq_88.r", "ecbq_89", "ecbq_97", "ecbq_98")], na.rm = T)
+star12plus$control [rowSums(is.na(star12plus[,c("ecbq_19.r", "ecbq_63", "ecbq_88.r", "ecbq_89", "ecbq_97", "ecbq_98")])) > 2 ] <- NA
+psych::alpha(star12plus[,c("ecbq_19.r", "ecbq_63", "ecbq_88.r", "ecbq_89", "ecbq_97", "ecbq_98")])
+star12plus$control
+
+#Low intensity pleasure
+star12plus$low_pleasure <- rowSums(star12plus[,c("ecbq_9", "ecbq_20", "ecbq_21", "ecbq_22", "ecbq_23", "ecbq_90")], na.rm = T)
+star12plus$control [rowSums(is.na(star12plus[,c("ecbq_9", "ecbq_20", "ecbq_21", "ecbq_22", "ecbq_23", "ecbq_90")])) > 2 ] <- NA
+psych::alpha(star12plus[,c("ecbq_9", "ecbq_20", "ecbq_21", "ecbq_22", "ecbq_23", "ecbq_90")])
+star12plus$low_pleasure
+
+#Motor activation
+star12plus$motor <- rowSums(star12plus[,c("ecbq_4", "ecbq_8", "ecbq_44", "ecbq_45", "ecbq_56", "ecbq_80")], na.rm = T)
+star12plus$control [rowSums(is.na(star12plus[,c("ecbq_4", "ecbq_8", "ecbq_44", "ecbq_45", "ecbq_56", "ecbq_80")])) > 2 ] <- NA
+psych::alpha(star12plus[,c("ecbq_4", "ecbq_8", "ecbq_44", "ecbq_45", "ecbq_56", "ecbq_80")])
+star12plus$motor
+
+#Perceptual sensitivity
+star12plus$perc <- rowSums(star12plus[,c("ecbq_7", "ecbq_34", "ecbq_71", "ecbq_72", "ecbq_87")], na.rm = T)
+star12plus$perc [rowSums(is.na(star12plus[,c("ecbq_7", "ecbq_34", "ecbq_71", "ecbq_72", "ecbq_87")])) > 2 ] <- NA
+psych::alpha(star12plus[,c("ecbq_7", "ecbq_34", "ecbq_71", "ecbq_72", "ecbq_87")])
+star12plus$perc
+
+#Positive anticipation
+star12plus$positive <- rowSums(star12plus[,c("ecbq_42", "ecbq_43", "ecbq_81", "ecbq_82.r", "ecbq_94")], na.rm = T)
+star12plus$positive [rowSums(is.na(star12plus[,c("ecbq_42", "ecbq_43", "ecbq_81", "ecbq_82.r", "ecbq_94")])) > 2 ] <- NA
+psych::alpha(star12plus[,c("ecbq_42", "ecbq_43", "ecbq_81", "ecbq_82.r", "ecbq_94")])
+star12plus$positive
+
+#Sadness
+star12plus$sad <- rowSums(star12plus[,c("ecbq_35", "ecbq_64", "ecbq_67", "ecbq_86", "ecbq_91", "ecbq_107")], na.rm = T)
+star12plus$sad [rowSums(is.na(star12plus[,c("ecbq_35", "ecbq_64", "ecbq_67", "ecbq_86", "ecbq_91", "ecbq_107")])) > 2 ] <- NA
+psych::alpha(star12plus[,c("ecbq_35", "ecbq_64", "ecbq_67", "ecbq_86", "ecbq_91", "ecbq_107")])
+star12plus$sad
+
+#Shy
+star12plus$shy <- rowSums(star12plus[,c("ecbq_2", "ecbq_3", "ecbq_31", "ecbq_32", "ecbq_50")], na.rm = T)
+star12plus$shy [rowSums(is.na(star12plus[,c("ecbq_2", "ecbq_3", "ecbq_31", "ecbq_32", "ecbq_50")])) > 2 ] <- NA
+psych::alpha(star12plus[,c("ecbq_2", "ecbq_3", "ecbq_31", "ecbq_32", "ecbq_50")])
+star12plus$shy
+
+#Sociability
+star12plus$social <- rowSums(star12plus[,c("ecbq_16", "ecbq_54", "ecbq_96", "ecbq_106")], na.rm = T)
+star12plus$social [rowSums(is.na(star12plus[,c("ecbq_16", "ecbq_54", "ecbq_96", "ecbq_106")])) > 2 ] <- NA
+psych::alpha(star12plus[,c("ecbq_16", "ecbq_54", "ecbq_96", "ecbq_106")])
+star12plus$social
+
+#Soothability
+star12plus$soothe <- rowSums(star12plus[,c("ecbq_28", "ecbq_102.r", "ecbq_103", "ecbq_65", "ecbq_66.r")], na.rm = T)
+star12plus$soothe [rowSums(is.na(star12plus[,c("ecbq_28", "ecbq_102.r", "ecbq_103", "ecbq_65", "ecbq_66.r")])) > 2 ] <- NA
+psych::alpha(star12plus[,c("ecbq_28", "ecbq_102.r", "ecbq_103", "ecbq_65", "ecbq_66.r")])
+star12plus$soothe
+
+#Below codes the three MAIN factors/variables
+#Reverse coding Soothe Variable 
+star12plus$ecbq_28.r <- car::recode(star12plus$ecbq_28, "'7'='1'; '6'='2';'5'='3';'4'='4';'3'='5';'2'='6';'1'='7';else=NA")
+star12plus$ecbq_103.r <- car::recode(star12plus$ecbq_103, "'7'='1'; '6'='2';'5'='3';'4'='4';'3'='5';'2'='6';'1'='7';else=NA")
+star12plus$ecbq_65.r <- car::recode(star12plus$ecbq_65, "'7'='1'; '6'='2';'5'='3';'4'='4';'3'='5';'2'='6';'1'='7';else=NA")
+
+#Negative affect
+star12plus$ecbq_negaffect <- rowMeans(star12plus[,c("ecbq_5","ecbq_6", "ecbq_37", "ecbq_39", "ecbq_69", "ecbq_70", "ecbq_74", "ecbq_38","ecbq_25", "ecbq_26", "ecbq_57", "ecbq_58", "ecbq_59", "ecbq_60", "ecbq_99", "ecbq_4", "ecbq_8", "ecbq_44", "ecbq_45", "ecbq_56", "ecbq_80", "ecbq_35", "ecbq_64", "ecbq_67", "ecbq_86", "ecbq_91", "ecbq_107", "ecbq_42", "ecbq_43", "ecbq_81", "ecbq_82.r", "ecbq_94", "ecbq_2", "ecbq_3", "ecbq_31", "ecbq_32", "ecbq_50", "ecbq_28.r", "ecbq_102", "ecbq_103.r", "ecbq_65.r", "ecbq_66")], na.rm = T)
+psych::alpha(star12plus[,c("ecbq_5","ecbq_6", "ecbq_37", "ecbq_39", "ecbq_69", "ecbq_70", "ecbq_74", "ecbq_38","ecbq_25", "ecbq_26", "ecbq_57", "ecbq_58", "ecbq_59", "ecbq_60", "ecbq_99", "ecbq_4", "ecbq_8", "ecbq_44", "ecbq_45", "ecbq_56", "ecbq_80", "ecbq_35", "ecbq_64", "ecbq_67", "ecbq_86", "ecbq_91", "ecbq_107", "ecbq_42", "ecbq_43", "ecbq_81", "ecbq_82.r", "ecbq_94", "ecbq_2", "ecbq_3", "ecbq_31", "ecbq_32", "ecbq_50", "ecbq_28.r", "ecbq_102", "ecbq_103.r", "ecbq_65.r", "ecbq_66")])
+star12plus$ecbq_negaffect
+
+#Surgency
+star12plus$ecbq_surgency <- rowMeans(star12plus[,c("ecbq_17.r", "ecbq_18", "ecbq_52.r", "ecbq_53", "ecbq_27.r","ecbq_33", "ecbq_73", "ecbq_12", "ecbq_61", "ecbq_62.r", "ecbq_75", "ecbq_76", "ecbq_11", "ecbq_105", "ecbq_47", "ecbq_48", "ecbq_49", "ecbq_77", "ecbq_16", "ecbq_54", "ecbq_96", "ecbq_106", "ecbq_42", "ecbq_43", "ecbq_81", "ecbq_82.r", "ecbq_94")], na.rm = T)
+psych::alpha(star12plus[,c("ecbq_17.r", "ecbq_18", "ecbq_52.r", "ecbq_53", "ecbq_27.r","ecbq_33", "ecbq_73", "ecbq_12", "ecbq_61", "ecbq_62.r", "ecbq_75", "ecbq_76", "ecbq_11", "ecbq_105", "ecbq_47", "ecbq_48", "ecbq_49", "ecbq_77", "ecbq_16", "ecbq_54", "ecbq_96", "ecbq_106", "ecbq_42", "ecbq_43", "ecbq_81", "ecbq_82.r", "ecbq_94")])
+star12plus$ecbq_surgency [rowSums(is.na(star12plus[,c("ecbq_17.r", "ecbq_18", "ecbq_52.r", "ecbq_53", "ecbq_27.r","ecbq_33", "ecbq_73", "ecbq_12", "ecbq_61", "ecbq_62.r", "ecbq_75", "ecbq_76", "ecbq_11", "ecbq_105", "ecbq_47", "ecbq_48", "ecbq_49", "ecbq_77", "ecbq_16", "ecbq_54", "ecbq_96", "ecbq_106", "ecbq_42", "ecbq_43", "ecbq_81", "ecbq_82.r", "ecbq_94")])) > 2 ] <- NA
+star12plus$ecbq_surgency
+
+#Effortful Control
+star12plus$ecbq_effort <- rowMeans(star12plus[,c("ecbq_19.r", "ecbq_63", "ecbq_88.r", "ecbq_89", "ecbq_97", "ecbq_98","ecbq_9", "ecbq_20", "ecbq_21", "ecbq_22", "ecbq_23", "ecbq_90", "ecbq_13.r","ecbq_14", "ecbq_51.r", "ecbq_24", "ecbq_92", "ecbq_93", "ecbq_10","ecbq_30", "ecbq_40", "ecbq_41.r", "ecbq_36", "ecbq_68", "ecbq_100", "ecbq_104" )], na.rm = T)
+star12plus$ecbq_surgency [rowSums(is.na(star12plus[,c("ecbq_19.r", "ecbq_63", "ecbq_88.r", "ecbq_89", "ecbq_97", "ecbq_98","ecbq_9", "ecbq_20", "ecbq_21", "ecbq_22", "ecbq_23", "ecbq_90", "ecbq_13.r","ecbq_14", "ecbq_51.r", "ecbq_24", "ecbq_92", "ecbq_93", "ecbq_10","ecbq_30", "ecbq_40", "ecbq_41.r", "ecbq_36", "ecbq_68", "ecbq_100", "ecbq_104")])) > 2 ] <- NA
+psych::alpha(star12plus[,c("ecbq_19.r", "ecbq_63", "ecbq_88.r", "ecbq_89", "ecbq_97", "ecbq_98","ecbq_9", "ecbq_20", "ecbq_21", "ecbq_22", "ecbq_23", "ecbq_90", "ecbq_13.r","ecbq_14", "ecbq_51.r", "ecbq_24", "ecbq_92", "ecbq_93", "ecbq_10","ecbq_30", "ecbq_40", "ecbq_41.r", "ecbq_36", "ecbq_68", "ecbq_100", "ecbq_104")])
+star12plus$ecbq_effort
+
+
+#star12plus$ecbq_total <- rowSums(star12plus[,c("soothe", "cuddle", "attn", "ecbq_activity", "frustration", "discomfort", "social", "shy", "sad", "fear", "positive", "low_pleasure", "control", "motor", "perc", "high_pleasure", "ecbq_activity", "")], na.rm = T)
+
+#Get scores of ECBQ
+#list(star12plus$ecbq_total)
+```
+
+## Scoring ECBQ_Secondary
+```{r}
+#Recoding all variables that need to be recoded
+star12plus$ecbq_27_secondary.r <- car::recode(star$ecbq_27_secondary, "'7'='1'; '6'='2';'5'='3';'4'='4';'3'='5';'2'='6';'1'='7';else=NA")
+star12plus$ecbq_62_secondary.r <- car::recode(star$ecbq_62_secondary, "'7'='1'; '6'='2';'5'='3';'4'='4';'3'='5';'2'='6';'1'='7';else=NA")
+star12plus$ecbq_78_secondary.r <- car::recode(star$ecbq_78_secondary, "'7'='1'; '6'='2';'5'='3';'4'='4';'3'='5';'2'='6';'1'='7';else=NA")
+star12plus$ecbq_95_secondary.r <- car::recode(star$ecbq_95_secondary, "'7'='1'; '6'='2';'5'='3';'4'='4';'3'='5';'2'='6';'1'='7';else=NA")
+star12plus$ecbq_41_secondary.r <- car::recode(star$ecbq_41_secondary, "'7'='1'; '6'='2';'5'='3';'4'='4';'3'='5';'2'='6';'1'='7';else=NA")
+star12plus$ecbq_13_secondary.r <- car::recode(star$ecbq_13_secondary, "'7'='1'; '6'='2';'5'='3';'4'='4';'3'='5';'2'='6';'1'='7';else=NA")
+star12plus$ecbq_51_secondary.r <- car::recode(star$ecbq_51_secondary, "'7'='1'; '6'='2';'5'='3';'4'='4';'3'='5';'2'='6';'1'='7';else=NA")
+star12plus$ecbq_17_secondary.r <- car::recode(star$ecbq_17_secondary, "'7'='1'; '6'='2';'5'='3';'4'='4';'3'='5';'2'='6';'1'='7';else=NA")
+star12plus$ecbq_52_secondary.r <- car::recode(star$ecbq_52_secondary, "'7'='1'; '6'='2';'5'='3';'4'='4';'3'='5';'2'='6';'1'='7';else=NA")
+star12plus$ecbq_19_secondary.r <- car::recode(star$ecbq_19_secondary, "'7'='1'; '6'='2';'5'='3';'4'='4';'3'='5';'2'='6';'1'='7';else=NA")
+star12plus$ecbq_88_secondary.r <- car::recode(star$ecbq_88_secondary, "'7'='1'; '6'='2';'5'='3';'4'='4';'3'='5';'2'='6';'1'='7';else=NA")
+star12plus$ecbq_82_secondary.r <- car::recode(star$ecbq_82_secondary, "'7'='1'; '6'='2';'5'='3';'4'='4';'3'='5';'2'='6';'1'='7';else=NA")
+star12plus$ecbq_66_secondary.r <- car::recode(star$ecbq_66_secondary, "'7'='1'; '6'='2';'5'='3';'4'='4';'3'='5';'2'='6';'1'='7';else=NA")
+star12plus$ecbq_102_secondary.r <- car::recode(star$ecbq_102_secondary, "'7'='1'; '6'='2';'5'='3';'4'='4';'3'='5';'2'='6';'1'='7';else=NA")
+
+#Activity Level
+star12plus$ecbq_activity <- rowSums(star12plus[,c("ecbq_27_secondary.r","ecbq_33_secondary", "ecbq_73_secondary", "ecbq_12_secondary", "ecbq_61_secondary", "ecbq_62_secondary.r", "ecbq_75_secondary", "ecbq_76_secondary")], na.rm = T)
+psych::alpha(star12plus[,c("ecbq_27_secondary.r","ecbq_33_secondary", "ecbq_73_secondary", "ecbq_12_secondary", "ecbq_61_secondary", "ecbq_62_secondary.r", "ecbq_75", "ecbq_76_secondary")])
+star12plus$ecbq_activity_secondary
+
+
+#Attentional Shifting
+star12plus$attn_secondary <- rowSums(star12plus[,c("ecbq_10_secondary_secondary","ecbq_30_secondary", "ecbq_40_secondary", "ecbq_41_secondary.r", "ecbq_36_secondary", "ecbq_68_secondary", "ecbq_100_secondary", "ecbq_104_secondary")], na.rm = T)
+psych::alpha(star12plus[,c("ecbq_10_secondary","ecbq_30_secondary", "ecbq_40_secondary", "ecbq_41_secondary.r", "ecbq_36_secondary", "ecbq_68_secondary", "ecbq_100_secondary", "ecbq_104_secondary")])
+star12plus$attn_secondary
+
+#Cuddliness
+star12plus$cuddle <- rowSums(star12plus[,c("ecbq_13.r","ecbq_14", "ecbq_51.r", "ecbq_24", "ecbq_92", "ecbq_93")], na.rm = T)
+psych::alpha(star12plus[,c("ecbq_13.r","ecbq_14", "ecbq_51.r", "ecbq_24", "ecbq_92", "ecbq_93")])
+star12plus$cuddle
+
+#Discomfort
+star12plus$discomfort <- rowSums(star12plus[,c("ecbq_5","ecbq_6", "ecbq_37", "ecbq_39", "ecbq_69", "ecbq_70", "ecbq_74")], na.rm = T)
+psych::alpha(star12plus[,c("ecbq_5","ecbq_6", "ecbq_37", "ecbq_39", "ecbq_69", "ecbq_70", "ecbq_74")])
+star12plus$discomfort
+
+#Fear
+star12plus$fear <- rowSums(star12plus[,c("ecbq_38","ecbq_25", "ecbq_26", "ecbq_57", "ecbq_58", "ecbq_59", "ecbq_60", "ecbq_99")], na.rm = T)
+psych::alpha(star12plus[,c("ecbq_38","ecbq_25", "ecbq_26", "ecbq_57", "ecbq_58", "ecbq_59", "ecbq_60", "ecbq_99")])
+star12plus$fear
+
+#Frustration
+star12plus$frustration_secondary <- rowSums(star12plus[,c("ecbq_1_secondary", "ecbq_15_secondary", "ecbq_83_secondary", "ecbq_84_secondary", "ecbq_85_secondary", "ecbq_101_secondary")], na.rm = T)
+psych::alpha(star12plus[,c("ecbq_1_secondary", "ecbq_15_secondary", "ecbq_83_secondary", "ecbq_84_secondary", "ecbq_85_secondary", "ecbq_101_secondary")])
+star12plus$frustration_secondary
+
+#High intensity pleasure
+star12plus$high_pleasure_secondary <- rowSums(star12plus[,c("ecbq_11_secondary", "ecbq_105_secondary", "ecbq_47_secondary", "ecbq_48_secondary", "ecbq_49_secondary", "ecbq_77_secondary")], na.rm = T)
+psych::alpha(star12plus[,c("ecbq_11_secondary", "ecbq_105_secondary", "ecbq_47_secondary", "ecbq_48_secondary", "ecbq_49_secondary", "ecbq_77_secondary")])
+star12plus$high_pleasure_secondary
+
+#Impulsivity
+star12plus$impulse_secondary <- rowSums(star12plus[,c("ecbq_17_secondary.r", "ecbq_18_secondary", "ecbq_52_secondary.r", "ecbq_53_secondary")], na.rm = T)
+psych::alpha(star12plus[,c("ecbq_17_secondary.r", "ecbq_18_secondary", "ecbq_52_secondary.r", "ecbq_53_secondary")])
+star12plus$impulse_secondary
+
+#Inhibitory Control
+star12plus$control_secondary <- rowSums(star12plus[,c("ecbq_19_secondary.r", "ecbq_63_secondary", "ecbq_88_secondary.r", "ecbq_89_secondary", "ecbq_97_secondary", "ecbq_98_secondary")], na.rm = T)
+psych::alpha(star12plus[,c("ecbq_19_secondary.r", "ecbq_63_secondary", "ecbq_88_secondary.r", "ecbq_89_secondary", "ecbq_97_secondary", "ecbq_98_secondary")])
+star12plus$control_secondary
+
+#Low intensity pleasure
+star12plus$low_pleasure <- rowSums(star12plus[,c("ecbq_9_secondary", "ecbq_20_secondary", "ecbq_21_secondary", "ecbq_22_secondary", "ecbq_23_secondary", "ecbq_90_secondary")], na.rm = T)
+psych::alpha(star12plus[,c("ecbq_9_secondary", "ecbq_20_secondary", "ecbq_21_secondary", "ecbq_22_secondary", "ecbq_23_secondary", "ecbq_90_secondary")])
+star12plus$low_pleasure_secondary
+
+#Motor activation
+star12plus$motor_secondary <- rowSums(star12plus[,c("ecbq_4_secondary", "ecbq_8_secondary", "ecbq_44_secondary", "ecbq_45_secondary", "ecbq_56_secondary", "ecbq_80_secondary")], na.rm = T)
+psych::alpha(star12plus[,c("ecbq_4_secondary", "ecbq_8_secondary", "ecbq_44_secondary", "ecbq_45_secondary", "ecbq_56_secondary", "ecbq_80_secondary")])
+star12plus$motor_secondary
+
+#Perceptual sensitivity
+star12plus$perc_secondary <- rowSums(star12plus[,c("ecbq_7_secondary", "ecbq_34_secondary", "ecbq_71_secondary", "ecbq_72_secondary", "ecbq_87_secondary")], na.rm = T)
+psych::alpha(star12plus[,c("ecbq_7_secondary", "ecbq_34_secondary", "ecbq_71_secondary", "ecbq_72_secondary", "ecbq_87_secondary")])
+star12plus$perc_secondary
+
+#Positive anticipation
+star12plus$positive_secondary <- rowSums(star12plus[,c("ecbq_42_secondary", "ecbq_43_secondary", "ecbq_81_secondary", "ecbq_82_secondary.r", "ecbq_94_secondary")], na.rm = T)
+psych::alpha(star12plus[,c("ecbq_42_secondary", "ecbq_43_secondary", "ecbq_81_secondary", "ecbq_82_secondary.r", "ecbq_94_secondary")])
+star12plus$positive_secondary
+
+#Sadness
+star12plus$sad <- rowSums(star12plus[,c("ecbq_35_secondary", "ecbq_64_secondary", "ecbq_67_secondary", "ecbq_86_secondary", "ecbq_91_secondary", "ecbq_107_secondary")], na.rm = T)
+psych::alpha(star12plus[,c("ecbq_35_secondary", "ecbq_64_secondary", "ecbq_67_secondary", "ecbq_86_secondary", "ecbq_91_secondary", "ecbq_107_secondary")])
+star12plus$sad_secondary
+
+#Shy
+star12plus$shy <- rowSums(star12plus[,c("ecbq_2_secondary", "ecbq_3_secondary", "ecbq_31_secondary", "ecbq_32_secondary", "ecbq_50_secondary")], na.rm = T)
+psych::alpha(star12plus[,c("ecbq_2_secondary", "ecbq_3_secondary", "ecbq_31_secondary", "ecbq_32_secondary", "ecbq_50_secondary")])
+star12plus$shy_secondary
+
+#Sociability
+star12plus$social_secondary <- rowSums(star12plus[,c("ecbq_16_secondary", "ecbq_54_secondary", "ecbq_96_secondary", "ecbq_106_secondary")], na.rm = T)
+psych::alpha(star12plus[,c("ecbq_16_secondary", "ecbq_54_secondary", "ecbq_96_secondary", "ecbq_106_secondary")])
+star12plus$social_secondary
+
+#Soothability
+star12plus$soothe_secondary <- rowSums(star12plus[,c("ecbq_28_secondary", "ecbq_102_secondary.r", "ecbq_103_secondary", "ecbq_65_secondary", "ecbq_66_secondary.r")], na.rm = T)
+psych::alpha(star12plus[,c("ecbq_28_secondary", "ecbq_102_secondary.r", "ecbq_103_secondary", "ecbq_65_secondary", "ecbq_66_secondary.r")])
+star12plus$soothe_secondary
+
+#Only score participants who have completed 80 % (recode this)
+star12plus$ecbq_total_secondary [rowSums(is.na(star12plus[,c("ecbq_1",	"ecbq_2",	"ecbq_3",	"ecbq_4",	"ecbq_5",	"ecbq_6",	"ecbq_7",	"ecbq_8",	"ecbq_9",	"ecbq_10", "ecbq_11",	"ecbq_12",	"ecbq_13.r",	"ecbq_14",	"ecbq_15",	"ecbq_16",	"ecbq_17.r",	"ecbq_18",	"ecbq_19.r",	"ecbq_20",	"ecbq_21",	"ecbq_22",	"ecbq_23",	"ecbq_24",	"ecbq_25", "ecbq_26",	"ecbq_27.r",	"ecbq_28",	"ecbq_29",	"ecbq_30",	"ecbq_31",	"ecbq_32",	"ecbq_33",	"ecbq_34",	"ecbq_35",	"ecbq_36",	"ecbq_37",	"ecbq_38",	"ecbq_39",	"ecbq_40",	"ecbq_41.r",	"ecbq_42",	"ecbq_43",	"ecbq_44",	"ecbq_45",	"ecbq_46",	"ecbq_47",	"ecbq_48",	"ecbq_49",	"ecbq_50",	"ecbq_51.r",	"ecbq_52.r",	"ecbq_53",	"ecbq_54",	"ecbq_55.r",	"ecbq_56.r",	"ecbq_57",	"ecbq_58",	"ecbq_59",	"ecbq_60",	"ecbq_61",	"ecbq_62.r",	"ecbq_63",	"ecbq_64",	"ecbq_65",	"ecbq_66.r",	"ecbq_67",	"ecbq_68",	"ecbq_69",	"ecbq_70",	"ecbq_71",	"ecbq_72",	"ecbq_73",	"ecbq_74",	"ecbq_75",	"ecbq_76",	"ecbq_77",	"ecbq_78.r",	"ecbq_79",	"ecbq_80",	"ecbq_81",	"ecbq_82.r",	"ecbq_83",	"ecbq_84",	"ecbq_85",	"ecbq_86",	"ecbq_87",	"ecbq_88.r",	"ecbq_89",	"ecbq_90",	"ecbq_91",	"ecbq_92",	"ecbq_93",	"ecbq_94",	"ecbq_95",	"ecbq_96",	"ecbq_97",	"ecbq_98",	"ecbq_99",	"ecbq_100",	"ecbq_101",	"ecbq_102.r",	"ecbq_103",	"ecbq_104",	"ecbq_105",	"ecbq_106",	"ecbq_107")])) > 2 ] <- NA
+
+#Get scores of ECBQ Secondary
+list(star12plus$ecbq_total_secondary)
+```
+
+
+# ITSEA
+```{r}
+#Externlaizing Symptoms
+#Activity/Impulsivity 
+
+
+# Impulse
+
+
+#Dysregulation
+#Eating Problem
+#star12plus$itsea_68.r <- car::recode(star12plus$itsea_68, "'2'='0'; '1'='1';'0'='2';else=NA")
+#star12plus$itsea_58.r <- car::recode(star12plus$itsea_58, "'2'='0'; '1'='1';'0'='2';else=NA")
+#star12plus$eating <- rowSums(star12plus[,c("itsea_68.r", "itsea_58.r", "itsea_71", "itsea_11", "itsea_65", "itsea_74", "itsea_35", "itsea_5", "itsea_18", "itsea_76")], na.rm = T)
+#star12plus$eating [rowSums(is.na(star12plus[,c("itsea_68.r", "itsea_58.r", "itsea_71", "itsea_11", "itsea_65", "itsea_74", "itsea_35", "itsea_5", "itsea_18", "itsea_76")])) > 2 ] <- NA
+#psych::alpha(star12plus[,c("itsea_68.r", "itsea_58.r", "itsea_71", "itsea_11", "itsea_65", "itsea_74", "itsea_35", "itsea_5", "itsea_18", "itsea_76")])
+#star12plus$eating
+
+#Sleeping problem
+#star12plus$itsea_33.r <- car::recode(star12plus$itsea_33, "'2'='0'; '1'='1';'0'='2';else=NA")
+#star12plus$sleep <- rowSums(star12plus[,c("itsea_8", "itsea_33.r", "itsea_39", "itsea_46", "itsea_70")], na.rm = T)
+#psych::alpha(star12plus[,c("itsea_8", "itsea_33.r", "itsea_39", "itsea_46", "itsea_70")])
+#star12plus$sleep
+
+#Empathy
+#star12plus$empathy <- rowSums(star12plus[,c("itsea_40", "itsea_44", "itsea_45", "itsea_53", "itsea_75")])
+
+#Below scores the main FOUR factors
+#Dysregulation
+#star12plus$dysregulate < - rowSums(star12plus[,c("itsea_68.r", "itsea_58.r", "itsea_71", "itsea_11", "itsea_65", "itsea_74", "itsea_35", "itsea_5", "itsea_18", "itsea_76", "itsea_8", "itsea_33.r", "itsea_39", "itsea_46", "itsea_70")], na.rm = T)
+#star12plus$dysregulate [rowSums(is.na(star12plus[,c("itsea_68.r", "itsea_58.r", "itsea_71", "itsea_11", "itsea_65", "itsea_74", "itsea_35", "itsea_5", "itsea_18", "itsea_76", "itsea_8", "itsea_33.r", "itsea_39", "itsea_46", "itsea_70")])) > 2 ] <- NA
+#psych::alpha(star12plus[,c("itsea_68.r", "itsea_58.r", "itsea_71", "itsea_11", "itsea_65", "itsea_74", "itsea_35", "itsea_5", "itsea_18", "itsea_76", "itsea_8", "itsea_33.r", "itsea_39", "itsea_46", "itsea_70")])
+#star12plus$dysregulate
+#View(star12plus[,c("record_id", "dysregulate")])
+
+
+#Only score participants who have completed more than 80% 
+
+#Get scores of ITSEA
+```
+
+## ITSEA_Secondary
+```{r}
+#star12plus$itsea_secondary_total <- rowSums(star12plus[,c("itsea_1_secondary",	"itsea_2_secondary",	"itsea_3_secondary",	"itsea_4_secondary",	"itsea_5_secondary",	"itsea_6_secondary",	"itsea_7_secondary",	"itsea_8_secondary",	"itsea_9_secondary", "itsea_10_secondary",	"itsea_11_secondary",	"itsea_12_secondary",	"itsea_13_secondary",	"itsea_14_secondary",	"itsea_15_secondary",	"itsea_16_secondary",	"itsea_17_secondary",	"itsea_18_secondary",	"itsea_19_secondary",	"itsea_20_secondary",	"itsea_21_secondary",	"itsea_22_secondary",	"itsea_23_secondary",	"itsea_24_secondary",	"itsea_25_secondary",	"itsea_26_secondary",	"itsea_27_secondary", "itsea_28_secondary",	"itsea_29_secondary", "itsea_30_secondary",	"itsea_31_secondary",	"itsea_32_secondary",	"itsea_33_secondary",	"itsea_34_secondary",	"itsea_35_secondary",	"itsea_36_secondary",	"itsea_37_secondary",	"itsea_38_secondary",	"itsea_39_secondary",	"itsea_40_secondary",	"itsea_41_secondary",	"itsea_42_secondary",	"itsea_43_secondary",	"itsea_44_secondary",	"itsea_45_secondary",	"itsea_46_secondary",	"itsea_47_secondary",	"itsea_48_secondary",	"itsea_49_secondary",	"itsea_50_secondary",	"itsea_51_secondary",	"itsea_52_secondary",	"itsea_53_secondary",	"itsea_54_secondary",	"itsea_55_secondary",	"itsea_56_secondary",	"itsea_57_secondary",	"itsea_58_secondary",	"itsea_59_secondary",	"itsea_60_secondary",	"itsea_61_secondary",	"itsea_62_secondary", "itsea_63_secondary",	"itsea_64_secondary",	"itsea_65_secondary",	"itsea_66_secondary",	"itsea_67_secondary",	"itsea_68_secondary",	"itsea_69_secondary",	"itsea_70_secondary",	"itsea_71_secondary",	"itsea_72_secondary",	"itsea_73_secondary",	"itsea_74_secondary",	"itsea_75_secondary",	"itsea_76_secondary")], na.rm = TRUE)
+
+#Only score participants who have completed more than 80%
+#star12plus$itsea_secondary_total [rowSums(is.na(star12plus[,c("itsea_1_secondary",	"itsea_2_secondary",	"itsea_3_secondary",	"itsea_4_secondary",	"itsea_5_secondary",	"itsea_6_secondary",	"itsea_7_secondary",	"itsea_8_secondary",	"itsea_9_secondary", "itsea_10_secondary",	"itsea_11_secondary",	"itsea_12_secondary",	"itsea_13_secondary",	"itsea_14_secondary",	"itsea_15_secondary",	"itsea_16_secondary",	"itsea_17_secondary",	"itsea_18_secondary",	"itsea_19_secondary",	"itsea_20_secondary",	"itsea_21_secondary",	"itsea_22_secondary",	"itsea_23_secondary",	"itsea_24_secondary",	"itsea_25_secondary",	"itsea_26_secondary",	"itsea_27_secondary", "itsea_28_secondary",	"itsea_29_secondary", "itsea_30_secondary",	"itsea_31_secondary",	"itsea_32_secondary",	"itsea_33_secondary",	"itsea_34_secondary",	"itsea_35_secondary",	"itsea_36_secondary",	"itsea_37_secondary",	"itsea_38_secondary",	"itsea_39_secondary",	"itsea_40_secondary",	"itsea_41_secondary",	"itsea_42_secondary",	"itsea_43_secondary",	"itsea_44_secondary",	"itsea_45_secondary",	"itsea_46_secondary",	"itsea_47_secondary",	"itsea_48_secondary",	"itsea_49_secondary",	"itsea_50_secondary",	"itsea_51_secondary",	"itsea_52_secondary",	"itsea_53_secondary",	"itsea_54_secondary",	"itsea_55_secondary",	"itsea_56_secondary",	"itsea_57_secondary",	"itsea_58_secondary",	"itsea_59_secondary",	"itsea_60_secondary",	"itsea_61_secondary",	"itsea_62_secondary", "itsea_63_secondary",	"itsea_64_secondary",	"itsea_65_secondary",	"itsea_66_secondary",	"itsea_67_secondary",	"itsea_68_secondary",	"itsea_69_secondary",	"itsea_70_secondary",	"itsea_71_secondary",	"itsea_72_secondary",	"itsea_73_secondary",	"itsea_74_secondary",	"itsea_75_secondary",	"itsea_76_secondary")])) > 2 ] <- NA 
+
+#Get scores of ITSEA_Secondary
+#list(star12plus$itsea_secondary_total)
+```
+
+# CHAOS
+```{r}
+#Reverse scoring these items 1, 2, 4, 12, 14, 15
+star12plus$chaos_1.r <- car::recode(star12plus$chaos_1," '0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star12plus$chaos_2.r <- car::recode(star12plus$chaos_2," '0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star12plus$chaos_4.r <- car::recode(star12plus$chaos_4,"'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star12plus$chaos_7.r <- car::recode(star12plus$chaos_7,"'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star12plus$chaos_12.r <- car::recode(star12plus$chaos_12,"'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star12plus$chaos_14.r <- car:: recode(star12plus$chaos_14,"'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star12plus$chaos_15.r <- car::recode(star12plus$chaos_15, "'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star12plus$chaos_total <- rowSums(star12plus[,c("chaos_1.r", "chaos_2.r","chaos_3", "chaos_4.r", "chaos_5", "chaos_6",	"chaos_7",	"chaos_8","chaos_9","chaos_10",	"chaos_11", "chaos_12.r", "chaos_13",	"chaos_14.r","chaos_15.r")], na.rm = T)
+
+#Get scores of CHAOS
+star12plus$chaos_total <-rowSums(star12plus[,c("chaos_1.r", "chaos_2","chaos_3", "chaos_4.r", "chaos_5", "chaos_6",	"chaos_7.r",	"chaos_8","chaos_9","chaos_10",	"chaos_11", "chaos_12.r",	"chaos_13",	"chaos_14.r","chaos_15.r")])
+psych::alpha(star12plus[,c("chaos_1.r", "chaos_2","chaos_3", "chaos_4.r", "chaos_5", "chaos_6",	"chaos_7.r",	"chaos_8","chaos_9","chaos_10",	"chaos_11", "chaos_12.r",	"chaos_13",	"chaos_14.r","chaos_15.r")])
+
+#Only score participants who have completed >80% of questionnaires
+star12plus$chaos_total[rowSums(is.na(star12plus[,c("chaos_1.r", "chaos_2","chaos_3", "chaos_4.r", "chaos_5", "chaos_6",	"chaos_7.r",	"chaos_8","chaos_9","chaos_10",	"chaos_11", "chaos_12.r",	"chaos_13",	"chaos_14.r","chaos_15.r")])) > 2 ] <- NA
+
+#Get scores of CHAOS
+list(star12plus$chaos_total)
+```
+
+## CHAOS_Secondary
+```{r}
+star12plus$chaos_1_secondary.r <- car::recode(star12plus$chaos_1_secondary," '0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star12plus$chaos_2_secondary.r <- car::recode(star12plus$chaos_2_secondary," '0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star12plus$chaos_4_secondary.r <- car::recode(star12plus$chaos_4_secondary,"'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star12plus$chaos_7_secondary.r <- car::recode(star12plus$chaos_7_secondary,"'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star12plus$chaos_12_secondary.r <- car::recode(star12plus$chaos_12,"'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star12plus$chaos_14_secondary.r <- car:: recode(star12plus$chaos_14,"'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star12plus$chaos_15_secondary.r <- car::recode(star12plus$chaos_15, "'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+
+#Get scores of CHAOS
+star12plus$chaos_secondary_total <- rowSums(star12plus[,c("chaos_1_secondary.r", "chaos_2_secondary.r","chaos_3_secondary", "chaos_4_secondary.r", "chaos_5_secondary", "chaos_6_secondary",	"chaos_7_secondary",	"chaos_8_secondary","chaos_9_secondary","chaos_10_secondary",	"chaos_11_secondary", "chaos_12_secondary.r", "chaos_13_secondary",	"chaos_14_secondary.r","chaos_15_secondary.r")], na.rm = T)
+
+#Only score participants who have completed 80% of questionnaires
+star12plus$chaos_total[rowSums(is.na(star12plus[,c("chaos_1_secondary.r", "chaos_2_secondary","chaos_3_secondary", "chaos_4_secondary.r", "chaos_5_secondary", "chaos_6_secondary",	"chaos_7_secondary",	"chaos_8_secondary","chaos_9_secondary","chaos_10_secondary",	"chaos_11_secondary", "chaos_12_secondary.r",	"chaos_13_secondary",	"chaos_14_secondary.r","chaos_15_secondary.r")])) > 2 ] <- NA
+
+#Get scores of CHAOS_Secondary
+list(star12plus$chaos_secondary_total)
+```
+
+# PSS 
+```{r}
+# Reverse scoring these items: 4,5,7,8
+star12plus$pss_4.r <- car::recode(star12plus$pss_4, " '0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star12plus$pss_5.r <- car::recode(star12plus$pss_5, " '0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star12plus$pss_7.r <- car::recode(star12plus$pss_7, " '0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star12plus$pss_8.r <- car::recode(star12plus$pss_8, " '0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+
+#Score all PSS questionnaires including recoded 
+star12plus$pss_total <- rowSums(star12plus[,c("pss_1", "pss_2", "pss_3", "pss_4.r", "pss_5.r", "pss_6", "pss_7.r", "pss_8.r", "pss_9", "pss_10")], na.rm = T)
+psych::alpha(star12plus[,c("pss_1", "pss_2", "pss_3", "pss_4.r", "pss_5.r", "pss_6", "pss_7.r", "pss_8.r", "pss_9", "pss_10")])
+
+#Only score participants who have completed >80% questionnaires
+star12plus$pss_total[rowSums(is.na(star12plus[,c("pss_1", "pss_2", "pss_3", "pss_4.r", "pss_5.r", "pss_6", "pss_7.r", "pss_8.r", "pss_9", "pss_10")])) > 2 ] <- NA
+
+#Get Scores of PSS
+#list(star12plus[c("pss_1", "pss_2", "pss_3", "pss_4.r", "pss_5.r", "pss_6", "pss_7.r", "pss_8.r", "pss_9", "pss_10", "pss_total")])
+star12plus$pss_total
+```
+
+## PSS_Secondary
+```{r}
+#Reverse score PSS 
+star12plus$pss_4_secondary.r <- car::recode(star12plus$pss_4_secondary,"'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star12plus$pss_5_secondary.r <- car::recode(star12plus$pss_5_secondary, "'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star12plus$pss_7_secondary.r <- car::recode (star12plus$pss_7_secondary,"'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star12plus$pss8_secondary.r <- car::recode(star12plus$pss_8_secondary, "'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+
+#Score all PSS questionnaires including recoded 
+star12plus$pss_secondary_total <- rowSums(star12plus[,c("pss_1_secondary", "pss_2_secondary",	"pss_3_secondary",	"pss_4_secondary.r",	"pss_5_secondary.r", "pss_6_secondary",	"pss_7_secondary.r", "pss_8_secondary.r",	"pss_9_secondary",	"pss_10_secondary")], na.rm = T)
+psych::alpha(star12plus[,c("pss_1_secondary", "pss_2_secondary",	"pss_3_secondary",	"pss_4_secondary.r",	"pss_5_secondary.r", "pss_6_secondary",	"pss_7_secondary.r", "pss_8_secondary.r",	"pss_9_secondary",	"pss_10_secondary")])
+
+#Only score participants who have completed 
+star12plus$pss_secondary_total [rowSums(is.na(star12plus[,c("pss_1_secondary", "pss_2_secondary",	"pss_3_secondary",	"pss_4_secondary.r",	"pss_5_secondary.r", "pss_6_secondary",	"pss_7_secondary.r", "pss_8_secondary.r",	"pss_9_secondary",	"pss_10_secondary")])) > 2] <- NA
+
+#Get scores of PSS for secondary
+list(star12plus$pss_secondary_total)
+```
+
+
+# STAS
+```{r}
+#Reverse code STAS 
+star12plus$stas_1.r <-  car::recode(star12plus$stas_1,"'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star12plus$stas_2.r <- car::recode(star12plus$stas_2,"'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star12plus$stas_5.r <- car::recode(star12plus$stas_5,"'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star12plus$stas_8.r <- car::recode(star12plus$stas_8,"'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star12plus$stas_10.r <- car::recode(star12plus$stas_10,"'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star12plus$stas_11.r <- car::recode(star12plus$stas_11,"'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star12plus$stas_15.r <- car::recode(star12plus$stas_15,"'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star12plus$stas_16.r <- car::recode(star12plus$stas_16,"'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star12plus$stas_19.r <- car::recode(star12plus$stas_19,"'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star12plus$stas_21.r <- car::recode(star12plus$stas_21,"'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star12plus$stas_23.r <- car::recode(star12plus$stas_23,"'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star12plus$stas_26.r <- car::recode(star12plus$stas_26,"'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star12plus$stas_27.r <- car::recode(star12plus$stas_27,"'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star12plus$stas_30.r <- car::recode(star12plus$stas_30,"'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star12plus$stas_33.r <- car::recode(star12plus$stas_33,"'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star12plus$stas_34.r <- car::recode(star12plus$stas_34,"'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star12plus$stas_36.r <- car::recode(star12plus$stas_36,"'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+star12plus$stas_39.r <- car::recode(star12plus$stas_39,"'0'='4';'1'='3';'2'='2';'3'='1';'4'='0';else=NA")
+
+star12plus$stas_total <- rowSums(star12plus[,c("stas_1.r","stas_2.r","stas_3","stas_4", "stas_5.r","stas_6", "stas_7","stas_8.r", "stas_9", "stas_10.r", "stas_11.r", "stas_12", "stas_13", "stas_14", "stas_15.r", "stas_16.r","stas_17","stas_18", "stas_19.r", "stas_21.r", "stas_22", "stas_23.r", "stas_24", "stas_25", "stas_26.r", "stas_27.r", "stas_28",	"stas_29", "stas_30.r", "stas_31",	"stas_32", "stas_33.r", "stas_34.r", "stas_35", "stas_36.r", "stas_37", "stas_38", "stas_39.r","stas_40")],na.rm = T)
+
+star12plus$stas_total[rowSums(is.na(star12plus[,c("stas_1.r","stas_2.r","stas_3","stas_4", "stas_5.r","stas_6", "stas_7","stas_8.r", "stas_9", "stas_10.r", "stas_11.r", "stas_12", "stas_13", "stas_14", "stas_15.r", "stas_16.r","stas_17","stas_18", "stas_19.r", "stas_21.r", "stas_22", "stas_23.r", "stas_24", "stas_25", "stas_26.r", "stas_27.r", "stas_28",	"stas_29", "stas_30.r", "stas_31",	"stas_32", "stas_33.r", "stas_34.r", "stas_35", "stas_36.r", "stas_37", "stas_38", "stas_39.r","stas_40")])) > 2 ] <- NA
+
+psych::alpha(star12plus[,c("stas_1.r","stas_2.r","stas_3","stas_4", "stas_5.r","stas_6", "stas_7","stas_8.r", "stas_9", "stas_10.r", "stas_11.r", "stas_12", "stas_13", "stas_14", "stas_15.r", "stas_16.r","stas_17","stas_18", "stas_19.r", "stas_21.r", "stas_22", "stas_23.r", "stas_24", "stas_25", "stas_26.r", "stas_27.r", "stas_28",	"stas_29", "stas_30.r", "stas_31",	"stas_32", "stas_33.r", "stas_34.r", "stas_35", "stas_36.r", "stas_37", "stas_38", "stas_39.r","stas_40")])
+
+
+#Get scores of STAS
+list(star12plus$stas_total)
+```
+
+## STAS_Secondary
+```{r}
+star12plus$stas_secondary_total <- rowSums(star12plus[,c("stas_1_secondary",	"stas_2_secondary",	"stas_3_secondary",	"stas_4_secondary",	"stas_5_secondary",	"stas_6_secondary",	"stas_7_secondary",	"stas_8_secondary", "stas_9_secondary",	"stas_10_secondary",	"stas_11_secondary",	"stas_12_secondary",	"stas_13_secondary",	"stas_14_secondary",	"stas_15_secondary",	"stas_16_secondary",	"stas_17_secondary",	"stas_18_secondary",	"stas_19_secondary",	"stas_20_secondary",	"stas_21_secondary",	"stas_22_secondary",	"stas_23_secondary",	"stas_24_secondary",	"stas_25_secondary",	"stas_26_secondary",	"stas_27_secondary",	"stas_28_secondary",	"stas_29_secondary",	"stas_30_secondary", "stas_31_secondary", "stas_32_secondary","stas_33_secondary",	"stas_34_secondary","stas_35_secondary",	"stas_36_secondary",	"stas_37_secondary",	"stas_38_secondary",	"stas_39_secondary", "stas_40_secondary")])
+
+#Only score participants who have completed >80%
+star12plus$stas_secondary_total[rowSums(is.na(star12plus[,c("stas_1_secondary","stas_2_secondary","stas_3_secondary","stas_4_secondary", "stas_5_secondary","stas_6_secondary", "stas_7_secondary","stas_8_secondary", "stas_9_secondary", "stas_10_secondary", "stas_11_secondary", "stas_12_secondary", "stas_13_secondary", "stas_14_secondary", "stas_15_secondary", "stas_16_secondary","stas_17_secondary","stas_18_secondary", "stas_19_secondary", "stas_20_secondary", "stas_21_secondary", "stas_22_secondary", "stas_23_secondary", "stas_24_secondary", "stas_25_secondary", "stas_26_secondary", "stas_27_secondary", "stas_28_secondary",	"stas_29_secondary", "stas_30_secondary", "stas_31_secondary",	"stas_32_secondary", "stas_33_secondary", "stas_34_secondary", "stas_35_secondary", "stas_36_secondary", "stas_37_secondary", "stas_38_secondary", "stas_39_secondary","stas_40_secondary")])) > 2 ] <- NA
+
+#Get scores of STAS_Secondary
+list(star12plus$stas_secondary_total)
+```
+
+
+# FAMILISMO
+```{r}
+star12plus$fam_total <- rowSums(star12plus[,c("fam_1_eng", "fam_2_eng", "fam_3_eng", "fam_4_eng", "fam_5_eng", "fam_6_eng", "fam_7_eng", "fam_8_eng", "fam_9_eng", "fam_10_eng", "fam_11_eng", "fam_12_eng", "fam_13_eng", "fam_14_eng", "fam_15_eng")], na.rm = T) 
+
+psych::alpha(star12plus[,c("fam_1_eng", "fam_2_eng", "fam_3_eng", "fam_4_eng", "fam_5_eng", "fam_6_eng", "fam_7_eng", "fam_8_eng", "fam_9_eng", "fam_10_eng", "fam_11_eng", "fam_12_eng", "fam_13_eng", "fam_14_eng", "fam_15_eng")])
+
+
+#Only score participans who completed 80% 
+star12plus$fam_total [rowSums(is.na(star12plus[,c("fam_1_eng", "fam_2_eng", "fam_3_eng", "fam_4_eng", "fam_5_eng", "fam_6_eng", "fam_7_eng", "fam_8_eng", "fam_9_eng", "fam_10_eng", "fam_11_eng", "fam_12_eng", "fam_13_eng", "fam_14_eng", "fam_15_eng")])) > 2 ] <- NA
+
+#Get Scores of Familismo 
+list(star12plus$fam_total)
+```
+
+## Familismo Secondary
+```{r}
+star12plus$fam_secondary_total <-rowSums(star12plus[,c("fam_1_eng_secondary",	"fam_2_eng_secondary",	"fam_3_eng_secondary",	"fam_4_eng_secondary",	"fam_5_eng_secondary",	"fam_6_eng_secondary",	"fam_7_eng_secondary",	"fam_8_eng_secondary",	"fam_9_eng_secondary",	"fam_10_eng_secondary",	"fam_11_eng_secondary",	"fam_12_eng_secondary",	"fam_13_eng_secondary",	"fam_14_eng_secondary", "fam_15_eng_secondary")])
+
+#Only score participants who completed 80%
+star12plus$fam_secondary_total [rowSums(is.na(star12plus[,c("fam_1_eng_secondary", "fam_2_eng_secondary", "fam_3_eng_secondary", "fam_4_eng_secondary", "fam_5_eng_secondary", "fam_6_eng_secondary", "fam_7_eng_secondary", "fam_8_eng_secondary", "fam_9_eng_secondary", "fam_10_eng_secondary", "fam_11_eng_secondary", "fam_12_eng_secondary", "fam_13_eng_secondary", "fam_14_eng_secondary", "fam_15_eng_secondary")])) > 2 ] <- NA
+
+#Get scores of Familismo Secondary
+list(star12plus$fam_seconday_total)
+```
+
+# Cultural Values Scale
+```{r}
+#Below codes all Mexican American Values
+#Familism Support
+star12plus$macvs_support <- rowSums(star12plus[,c("macvs_2", "macvs_9", "macvs_20", "macvs_28", "macvs_37", "macvs_46")], na.rm = T )
+star12plus$macvs_support [rowSums(is.na(star12plus[,c("macvs_2", "macvs_9", "macvs_20", "macvs_28", "macvs_37", "macvs_46")])) > 2] <- NA
+psych::alpha(star12plus[,c("macvs_2", "macvs_9", "macvs_20", "macvs_28", "macvs_37", "macvs_46")])
+star12plus$macvs_support
+
+#Familism Obligation
+star12plus$macvs_obligation <- rowSums(star12plus[,c("macvs_3", "macvs_11", "macvs_21", "macvs_29", "macvs_38")], na.rm = T )
+star12plus$macvs_obligation [rowSums(is.na(star12plus[,c("macvs_3", "macvs_11", "macvs_21", "macvs_29", "macvs_38")])) > 2] <- NA
+psych::alpha(star12plus[,c("macvs_3", "macvs_11", "macvs_21", "macvs_29", "macvs_38")])
+star12plus$macvs_obligation
+
+#Familism - Referent
+star12plus$macvs_referent <- rowSums(star12plus[,c("macvs_4", "macvs_12", "macvs_30", "macvs_39", "macvs_47")], na.rm = T )
+star12plus$macvs_referent [rowSums(is.na(star12plus[,c("macvs_4", "macvs_12", "macvs_30", "macvs_39", "macvs_47")])) > 2] <- NA
+psych::alpha(star12plus[,c("macvs_4", "macvs_12", "macvs_30", "macvs_39", "macvs_47")])
+star12plus$macvs_referent
+
+# Respect
+star12plus$macvs_respect <- rowSums(star12plus[,c("macvs_5", "macvs_10", "macvs_15", "macvs_22", "macvs_25", "macvs_31", "macvs_40", "macvs_49")], na.rm = T )
+star12plus$macvs_respect [rowSums(is.na(star12plus[,c("macvs_5", "macvs_10", "macvs_15", "macvs_22", "macvs_25", "macvs_31", "macvs_40", "macvs_49")])) > 2] <- NA
+
+psych::alpha(star12plus[,c("macvs_5", "macvs_10", "macvs_15", "macvs_22", "macvs_25", "macvs_31", "macvs_40", "macvs_49")])
+star12plus$macvs_respect
+
+# Religion
+star12plus$macvs_religion <- rowSums(star12plus[,c("macvs_1", "macvs_8", "macvs_18", "macvs_27", "macvs_36", "macvs_45", "macvs_48")], na.rm = T)
+
+star12plus$macvs_religion [rowSums(is.na(star12plus[,c("macvs_1", "macvs_8", "macvs_18", "macvs_27", "macvs_36", "macvs_45", "macvs_48")])) > 2] <- NA
+psych::alpha(star12plus[,c("macvs_1", "macvs_8", "macvs_18", "macvs_27", "macvs_36", "macvs_45", "macvs_48")])
+star12plus$macvs_religion
+
+#Traditional gender roles
+star12plus$macvs_gender <- rowSums(star12plus[,c("macvs_13", "macvs_19","macvs_32", "macvs_42", "macvs_50")], na.rm = T)
+star12plus$macvs_gender [rowSums(is.na(star12plus[,c("macvs_13", "macvs_19","macvs_32", "macvs_42", "macvs_50")])) > 2] <- NA
+psych::alpha(star12plus[,c("macvs_13", "macvs_19","macvs_32", "macvs_42", "macvs_50")])
+star12plus$macvs_gender
+
+#Below codes all MAINSTREAM Values 
+#Material Success
+star12plus$macvs_material <- rowSums(star12plus[,c("macvs_6", "macvs_16", "macvs_24", "macvs_34", "macvs_43")], na.rm = T)
+star12plus$macvs_material [rowSums(is.na(star12plus[,c("macvs_6", "macvs_16", "macvs_24", "macvs_34", "macvs_43")])) > 2] <- NA
+psych::alpha(star12plus[,c("macvs_6", "macvs_16", "macvs_24", "macvs_34", "macvs_43")])
+star12plus$macvs_material
+
+#Independence & Self Reliance
+star12plus$macvs_independence <- rowSums(star12plus[,c("macvs_7", "macvs_17", "macvs_26", "macvs_35", "macvs_44")], na.rm = T)
+star12plus$macvs_independence [rowSums(is.na(star12plus[,c("macvs_7", "macvs_17", "macvs_26", "macvs_35", "macvs_44")])) > 2] <- NA
+psych::alpha(star12plus[,c("macvs_7", "macvs_17", "macvs_26", "macvs_35", "macvs_44")])
+star12plus$macvs_independence
+
+#Competition & Personal Achievement 
+star12plus$macvs_commpete <- rowSums(star12plus[,c("macvs_14", "macvs_23", "macvs_33", "macvs_41")])
+star12plus$macvs_compete [rowSums(is.na(star12plus[,c("macvs_14", "macvs_23", "macvs_33", "macvs_41")])) > 2] <- NA
+psych::alpha(star12plus[,c("macvs_14", "macvs_23", "macvs_33", "macvs_41")])
+star12plus$macvs_compete
+
+#Get Scores of MACVS
+star12plus$macvs_total <- rowSums(star12plus[,c("macvs_14", "macvs_23", "macvs_33", "macvs_41","macvs_7", "macvs_17", "macvs_26", "macvs_35", "macvs_44", "macvs_6", "macvs_16", "macvs_24", "macvs_34", "macvs_43", "macvs_13", "macvs_19","macvs_32", "macvs_42", "macvs_50", "macvs_1", "macvs_8", "macvs_18", "macvs_27", "macvs_36", "macvs_45", "macvs_48", "macvs_5", "macvs_10", "macvs_15", "macvs_22", "macvs_25", "macvs_31", "macvs_40", "macvs_49", "macvs_4", "macvs_12", "macvs_30", "macvs_39", "macvs_47","macvs_3", "macvs_11", "macvs_21", "macvs_29", "macvs_38", "macvs_2", "macvs_9", "macvs_20", "macvs_28", "macvs_37", "macvs_46")], na.rm = T)
+
+psych::alpha(star12plus[,c("macvs_14", "macvs_23", "macvs_33", "macvs_41","macvs_7", "macvs_17", "macvs_26", "macvs_35", "macvs_44", "macvs_6", "macvs_16", "macvs_24", "macvs_34", "macvs_43", "macvs_13", "macvs_19","macvs_32", "macvs_42", "macvs_50", "macvs_1", "macvs_8", "macvs_18", "macvs_27", "macvs_36", "macvs_45", "macvs_48", "macvs_5", "macvs_10", "macvs_15", "macvs_22", "macvs_25", "macvs_31", "macvs_40", "macvs_49", "macvs_4", "macvs_12", "macvs_30", "macvs_39", "macvs_47","macvs_3", "macvs_11", "macvs_21", "macvs_29", "macvs_38", "macvs_2", "macvs_9", "macvs_20", "macvs_28", "macvs_37", "macvs_46")])
+
+star12plus$macvs_total
+```
+
+## Cultural Values_Secondary
+```{r}
+star12plus$macvs_secondary_total <- rowSums(star12plus[,c("macvs_1_secondary",	"macvs_2_secondary",	"macvs_3_secondary",	"macvs_4_secondary",	"macvs_5_secondary",	"macvs_6_secondary",	"macvs_7_secondary",	"macvs_8_secondary",	"macvs_9_secondary",	"macvs_10_secondary", "macvs_11_secondary",	"macvs_12_secondary",	"macvs_13_secondary",	"macvs_14_secondary",	"macvs_15_secondary", "macvs_16_secondary",	"macvs_17_secondary",	"macvs_18_secondary",	"macvs_19_secondary",	"macvs_20_secondary",	"macvs_21_secondary",	"macvs_22_secondary",	"macvs_23_secondary",	"macvs_24_secondary",	"macvs_25_secondary",	"macvs_26_secondary",	"macvs_27_secondary",	"macvs_28_secondary",	"macvs_29_secondary",	"macvs_30_secondary",	"macvs_31_secondary",	"macvs_32_secondary", "macvs_33_secondary",	"macvs_34_secondary",	"macvs_35_secondary",	"macvs_36_secondary",	"macvs_37_secondary", "macvs_38_secondary",	"macvs_39_secondary",	"macvs_40_secondary",	"macvs_41_secondary",	"macvs_42_secondary",	"macvs_43_secondary",	"macvs_44_secondary",	"macvs_45_secondary",	"macvs_46_secondary",	"macvs_47_secondary",	"macvs_48_secondary",	"macvs_49_secondary",	"macvs_50_secondary")], na.rm = T)
+
+#Only Score participants who completed 80%
+star12plus$macvs_secondary_total [rowSums(is.na(star12plus[,c("macvs_1_secondary",	"macvs_2_secondary", "macvs_3_secondary", "macvs_4_secondary", "macvs_5_secondary", "macvs_6_secondary", "macvs_7_secondary", "macvs_8_secondary",	"macvs_9_secondary", "macvs_10_secondary", "macvs_11_secondary", "macvs_12_secondary", "macvs_13_secondary", "macvs_14", "macvs_15_secondary", "macvs_16_secondary", "macvs_17_secondary", "macvs_18_secondary", 	"macvs_19_secondary", "macvs_20_secondary", "macvs_21_secondary", "macvs_22_secondary", "macvs_23_secondary", "macvs_24_secondary", "macvs_25_secondary", "macvs_26_secondary", "macvs_27_secondary", "macvs_28_secondary",	"macvs_29_secondary", "macvs_30_secondary", "macvs_31_secondary", "macvs_32_secondary", "macvs_33_secondary", "macvs_34_secondary", "macvs_35_secondary", "macvs_36_secondary", "macvs_37_secondary", "macvs_38_secondary", 	"macvs_39_secondary", "macvs_40_secondary", "macvs_41_secondary", "macvs_42_secondary", "macvs_43_secondary", "macvs_44_secondary", "macvs_45_secondary", "macvs_46_secondary", "macvs_47_secondary", "macvs_48_secondary","macvs_49_secondary","macvs_50_secondary")])) > 2 ] <- NA
+
+#Get scores of MACVS for secondary 
+list(star12plus$macvs_secondary_total)
+```
+
+
+
+# RALES-B
+```{r}
+star12plus$rales_total <- rowSums(star12plus[,c("rales1_tc", "rales2_pc",	"rales3_pc",	"rales4_pc",	"rales5_tc",	"rales6_tc",	"rales7_tc",	"rales8_tc",	"rales9_tc")], na.rm = T)
+
+psych::alpha(star[,c("rales1_tc", "rales2_pc",	"rales3_pc",	"rales4_pc",	"rales5_tc",	"rales6_tc",	"rales7_tc",	"rales8_tc",	"rales9_tc")])
+
+#Get scores of participants who completed 80% or more
+star12plus$rales_total[rowSums(is.na(star12plus[,c("rales1_tc", "rales2_pc", "rales3_pc", "rales4_pc", "rales5_tc", "rales6_tc", "rales7_tc", "rales8_tc", "rales9_tc")])) > 2 ] <- NA
+
+#Get scores of RALES-B
+star12plus$rales_total
+```
+
+## RALES-B_Secondary
+```{r}
+star12plus$rales_total_secondary <- rowSums(star12plus[,c("rales1_tc_secondary",	"rales2_pc_secondary",	"rales3_pc_secondary",	"rales4_pc_secondary",	"rales5_tc_secondary",	"rales6_tc_secondary", "rales7_tc_secondary",	"rales8_tc_secondary",	"rales9_tc_secondary")], na.rm = T)
+
+#Get scores of participants who completed 80% or more
+star12plus$rales_total[rowSums(is.na(star12plus[,c("rales1_tc_secondary", "rales2_pc_secondary", "rales3_pc_secondary", "rales4_pc_secondary", "rales5_tc_secondary", "rales6_tc_secondary", "rales7_tc_secondary", "rales8_tc_secondary", "rales9_tc_secondary")])) > 2 ] <- NA
+
+#Get scores of RALES-B_Secondary
+list(star12plus$rales_total_secondary)
+```
+
+# QUIC-5 
+```{r}
+###Reverse code QUIC-5
+star12plus$quic_5_1.r <- car::recode(star12plus$quic_5_1, "'0' = '1'; '1' = '0'")
+star12plus$quic_5_4.r <- car::recode(star12plus$quic_5_4, "'0' = '1'; '1' = '0'")
+star12plus$quic5_total <- rowSums(star12plus[,c("quic_5_1.r", "quic_5_2",	"quic_5_3",	"quic_5_4.r", "quic_5_5")], na.rm = T)
+
+#identify missing rows
+missing_rows <- rowSums(is.na(star12plus[, c("quic_5_1.r", "quic_5_2", "quic_5_3", "quic_5_4.r", "quic_5_5")])) > 0
+
+#filter data
+completed_quic_data <- star12plus[!missing_rows,]
+
+#conduct analysis
+psych::alpha(completed_quic_data[, c("quic_5_1.r", "quic_5_2", "quic_5_3", "quic_5_4.r", "quic_5_5")])
+
+#Only score participants who have completed 
+star12plus$quic5_total [rowSums(is.na(star12plus[,c("quic_5_1.r", "quic_5_2", "quic_5_3", "quic_5_4.r", "quic_5_5")]))]
+
+#Get scores of QUIC-5
+list(star12plus$quic5_total)
+```
+
+## QUIC-5_Secondary
+```{r}
+###Reverse code QUIC-5
+#Reverse scoring these items: 1, 4
+star12plus$quic_5_1_secondary.r <- car::recode(star12plus$quic_5_1_secondary, "'0' = '1'; '1' = '0'")
+star12plus$quic_5_4_secondary.r <- car::recode(star12plus$quic_5_4_secondary, "'0' = '1'; '1' = '0'")
+star12plus$quic5_secondary_total <- rowSums(star12plus[,c("quic_5_1_secondary.r", "quic_5_2_secondary",	"quic_5_3_secondary",	"quic_5_4_secondary.r", "quic_5_5_secondary")], na.rm = T)
+
+#identify missing rows
+missing_rows <- rowSums(is.na(star12plus[, c("quic_5_1.r", "quic_5_2", "quic_5_3", "quic_5_4.r", "quic_5_5")])) > 2
+
+library(psych)
+
+#conduct analysis
+psych::alpha(completed_quic_data[, c("quic_5_1_secondary.r", "quic_5_2_secondary",	"quic_5_3_secondary",	"quic_5_4_secondary.r", "quic_5_5_secondary")])
+
+#Only score participants who have completed 
+star12plus$quic5_total [rowSums(is.na(star12plus[,c("quic_5_1_secondary.r", "quic_5_2_secondary", "quic_5_3_secondary", "quic_5_4_secondary.r", "quic_5_5_secondary")]))]
+
+#Get scores of QUIC-5
+list(star12plus$quic5_secondary_total)
+```
+
+
+# CSBS - Communication Composite
+```{r}
+star12plus$csbs_total_communicate <- rowSums(star12plus[,c("csbs_dp_e_1", "csbs_dp_e_2", "csbs_dp_e_3",	"csbs_dp_e_4", "csbs_dp_e_5",	"csbs_dp_e_6", "csbs_dp_e_7", "csbs_dp_e_8", "csbs_dp_g_9",	"csbs_dp_g_10",	"csbs_dp_g_11",	"csbs_dp_g_12",	"csbs_dp_g_13")], na.rm = TRUE)
+
+star12plus$csbs_total_communicate[rowSums(is.na(star12plus[,c("csbs_dp_e_1", "csbs_dp_e_2", "csbs_dp_e_3",	"csbs_dp_e_4", "csbs_dp_e_5",	"csbs_dp_e_6", "csbs_dp_e_7", "csbs_dp_e_8", "csbs_dp_g_9",	"csbs_dp_g_10",	"csbs_dp_g_11",	"csbs_dp_g_12",	"csbs_dp_g_13")])) > 2 ] <- NA
+
+
+psych::alpha(star12plus[,c("csbs_dp_e_1", "csbs_dp_e_2", "csbs_dp_e_3",	"csbs_dp_e_4", "csbs_dp_e_5",	"csbs_dp_e_6", "csbs_dp_e_7", "csbs_dp_e_8", "csbs_dp_g_9",	"csbs_dp_g_10",	"csbs_dp_g_11",	"csbs_dp_g_12",	"csbs_dp_g_13")])
+
+
+#Get scores of CSBS - Communication Composite
+list(star12plus[,c("csbs_dp_e_1", "csbs_dp_e_2", "csbs_dp_e_3",	"csbs_dp_e_4", "csbs_dp_e_5",	"csbs_dp_e_6", "csbs_dp_e_7", "csbs_dp_e_8","csbs_dp_g_9",	"csbs_dp_g_10",	"csbs_dp_g_11",	"csbs_dp_g_12",	"csbs_dp_g_13")])
+star12plus$csbs_total_communicate
+
+```
+
+## Scoring CSBS - Communication Composite_Secondary
+```{r}
+star12plus$csbs_secondary_total <- rowSums(star12plus[,c(	"csbs_dp_e_1_secondary",	"csbs_dp_e_2_secondary",	"csbs_dp_e_3_secondary",	"csbs_dp_e_4_secondary",	"csbs_dp_e_5_secondary",	"csbs_dp_e_6_secondary",	"csbs_dp_e_7_secondary",	"csbs_dp_e_8_secondary","csbs_dp_g_9_secondary",	"csbs_dp_g_10_secondary","csbs_dp_g_11_secondary",	"csbs_dp_g_12_secondary",	"csbs_dp_g_13_secondary")], na.rm = TRUE)
+
+#Get scores 
+list(star12plus[,c("csbs_dp_e_1_secondary",	"csbs_dp_e_2_secondary",	"csbs_dp_e_3_secondary",	"csbs_dp_e_4_secondary",	"csbs_dp_e_5_secondary",	"csbs_dp_e_6_secondary",	"csbs_dp_e_7_secondary",	"csbs_dp_e_8_secondary","csbs_dp_g_9_secondary",	"csbs_dp_g_10_secondary","csbs_dp_g_11_secondary",	"csbs_dp_g_12_secondary",	"csbs_dp_g_13_secondary")])
+```
+
+
+# CSBS - Expressive Speech Composite 
+```{r}
+star12plus$csbs_expressive_total <- rowSums (star12plus[,c("csbs_dp_s_14", "csbs_dp_s_15", "csbs_dp_s_16",	"csbs_dp_w_17",	"csbs_dp_w_18")], na.rm =TRUE)
+
+#Get scores of CSBS - Expressive Speech Composite
+list(star12plus[,c("csbs_dp_s_14", "csbs_dp_s_15", "csbs_dp_s_16",	"csbs_dp_w_17",	"csbs_dp_w_18")])
+star12plus$csbs_expressive
+
+```
+
+## CSBS - Expressive Speech Composite_Secondary
+```{r}
+star12plus$csbs_secondary_total <- rowSums(star12plus[,c("csbs_dp_s_14_secondary	csbs_dp_s_15_secondary	csbs_dp_s_16_secondary	csbs_dp_w_17_secondary	csbs_dp_w_18_secondary")], na.rm = TRUE)
+
+#Get scores
+list(star12plus[,c("csbs_dp_s_14_secondary	csbs_dp_s_15_secondary	csbs_dp_s_16_secondary	csbs_dp_w_17_secondary	csbs_dp_w_18_secondary")])
+```
+
+# CSBS - Symbolic Composite 
+```{r}
+#remove missing values
+star12plus$csbs_symbolic_total <- rowSums(star12plus[, c("csbs_dp_u_19", "csbs_dp_u_20", "csbs_dp_o_21", "csbs_dp_o_22", "csbs_dp_o_23", "csbs_dp_o_24", "csbs_dp_32")], na.rm = TRUE)
+psych::alpha(star12plus[,c("csbs_dp_u_19", "csbs_dp_u_20", "csbs_dp_o_21", "csbs_dp_o_22", "csbs_dp_o_23", "csbs_dp_o_24", "csbs_dp_32")])
+#list(star12plus[,c("csbs_dp_u_19", "csbs_dp_u_20", "csbs_dp_o_21", "csbs_dp_o_22", "csbs_dp_o_23",	"csbs_dp_o_24", "csbs_dp_32", "csbs_dp_33")])
+star12plus$csbs_symbolic_total
+```
+
+## CSBS - Symbolic Composite_Secondary
+```{r}
+star12plus$csbs_secondary_total <- rowSums(star12plus[,c("csbs_dp_u_19_secondary	csbs_dp_u_20_secondary	csbs_dp_o_21_secondary	csbs_dp_o_22_secondary	csbs_dp_o_23_secondary	csbs_dp_o_24_secondary	csbs_dp_32_secondary	csbs_dp_33_secondary")],na.rm = TRUE) 
+
+list(star12plus[,c("csbs_dp_u_19_secondary",	"csbs_dp_u_20_secondary",	"csbs_dp_o_21_secondary",	"csbs_dp_o_22_secondary",	"csbs_dp_o_23_secondary",	"csbs_dp_o_24_secondary",	"csbs_dp_32_secondary",	"csbs_dp_33_secondary")])
+```
+
+# Merged CSV
+```{r}
+#This is for secondary
+#write.csv(star[,c("record_id", "cmu_pr_total_secondary", "bdi_total", "bdiii_total", "bai_total", "stas_total", "fam_total", "rales_total", "quic5_total", "chaos_total","pss_total", "ibqr_negaffect", "ibqr_orienting", "ibqr_surgency", "csbs_symbolic_total", "csbs_expressive_total","csbs_total_communicate")], "/Users/melaniekwan/Library/CloudStorage/GoogleDrive-smkwan@usc.edu/.shortcut-targets-by-id/1YZiuWrGpvn0s5DiJmiP6QJk1xf30pnzy/BEAD Lab/Studies/STAR/Data/Questionnaires/Under 12 mos/Questionnaires_Score.csv", row.names = FALSE, na = "")
+
+# Create an overall df
+star_merged <- bind_rows(star[,c("record_id", "cmu_pr_total", "epds_total", "bdi_total", "bdiii_total", "bai_total", "stas_total", "fam_total", "rales_total", "quic5_total", "chaos_total","pss_total", "ibqr_negaffect", "ibqr_orienting", "ibqr_surgency", "csbs_symbolic_total", "csbs_expressive_total","csbs_total_communicate")], star12plus[,c("record_id", "cmu_pr_total", "epds_total", "bdi_total", "bdiii_total", "bai_total","fam_total", "rales_total", "epds_total", "macvs_total","ecbq_negaffect", "ecbq_surgency", "ecbq_effort", "quic5_total", "chaos_total","pss_total", "csbs_total_communicate", "csbs_expressive_total", "csbs_symbolic_total")]) 
+
+write.csv(star_merged, file = "/Users/melaniekwan/Library/CloudStorage/GoogleDrive-smkwan@usc.edu/.shortcut-targets-by-id/1YZiuWrGpvn0s5DiJmiP6QJk1xf30pnzy/BEAD Lab/Studies/STAR/Data/Questionnaires/Merged_QSTS.csv", row.names = FALSE)
+
+#write.csv(star_merged[,c("record_id", "cmu_pr_total", "epds_total", "bdi_total", "bdiii_total", "bai_total", "stas_total", "fam_total", "rales_total", "quic5_total", "chaos_total","pss_total", "ibqr_negaffect", "ibqr_orienting", "ibqr_surgency", "csbs_symbolic_total", "csbs_expressive_total","csbs_total_communicate","record_id", "cmu_pr_total", "epds_total", "bdi_total", "bdiii_total", "bai_total","fam_total", "rales_total", "epds_total", "macvs_total","ecbq_negaffect", "ecbq_surgency", "ecbq_effort", "quic5_total", "chaos_total","pss_total", "csbs_total_communicate", "csbs_expressive_total", "csbs_symbolic_total")],"/Users/melaniekwan/Library/CloudStorage/GoogleDrive-smkwan@usc.edu/.shortcut-targets-by-id/1YZiuWrGpvn0s5DiJmiP6QJk1xf30pnzy/BEAD Lab/Studies/STAR/Data/Questionnaires/STAR_Qsts_Merged.csv", row.names = FALSE)
+
+
+
+
+```
